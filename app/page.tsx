@@ -14,6 +14,13 @@ export default function Home() {
 
   // UseEffects
   useEffect(() => {
+    // Request notification permission on initial render
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
     const endTime = localStorage.getItem("endTime");
     const remainingTime = localStorage.getItem("remainingTime");
     const prevType = localStorage.getItem("type");
@@ -97,13 +104,16 @@ export default function Home() {
         const newCycle = prev + 1;
         if (newCycle === 4) {
           resetType("Long break");
+          showNotification("Time for a long break!");
           return 0;
         }
         resetType("Short break");
+        showNotification("Time for a quick break!");
         return newCycle;
       });
     } else {
       resetType("Pomodoro");
+      showNotification("Time to work!");
     }
     localStorage.removeItem("lastInteraction");
   }
@@ -123,6 +133,20 @@ export default function Home() {
     setSeconds(0);
     setIsActive(false); // Stop the timer
   }
+
+  const showNotification = (message: string) => {
+    if (Notification.permission === "granted") {
+      try {
+        new Notification("Pomodoro Timer", {
+          body: message,
+          // icon: "icon.png", // Ensure this path is correct
+          requireInteraction: true, // Key option for persistent notifications
+        });
+      } catch (error) {
+        console.error("Error creating notification:", error);
+      }
+    }
+  };
 
   const getBackgroundColor = () => {
     if (type === "Pomodoro") {
