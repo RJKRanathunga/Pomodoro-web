@@ -27,17 +27,21 @@ export default function Home() {
     const lastInteraction = localStorage.getItem("lastInteraction");
     setType(prevType || "Pomodoro");
    
+    let duration = 0;
     if (lastInteraction) {
       const lastInteractionTime = new Date(lastInteraction).getTime();
       const currentTime = new Date().getTime();
-      const duration = currentTime - lastInteractionTime;
-      if (duration > 5*60*1000) {
+      duration = currentTime - lastInteractionTime;
+      if (duration >= 5*60*1000) {
         resetType("Pomodoro");
-      } else if (duration > 25*60*1000) {
+      } else if (duration >= 25*60*1000) {
         resetType("Pomodoro");
         setCycleWithinBatch(0);
       }
-    }  else if (remainingTime) {
+      localStorage.removeItem("lastInteraction");
+    }
+
+    if (remainingTime && duration < 5*60*1000) {
       const time = parseInt(remainingTime);
       setMinutes(Math.floor(time / 60000));
       setSeconds(Math.floor((time % 60000) / 1000));
@@ -85,7 +89,6 @@ export default function Home() {
     setIsActive(true)
     const endTime = new Date().getTime() + minutes * 60000 + seconds * 1000;
     localStorage.setItem("endTime", new Date(endTime).toISOString());
-    localStorage.setItem("lastInteraction", new Date().toISOString());
   };
   const pauseTimer = () => {
     localStorage.setItem("remainingTime", (minutes * 60000 + seconds * 1000).toString());
