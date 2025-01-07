@@ -1,32 +1,48 @@
 "use client"; // Ensure this file is treated as a client component
 
 import { useState, useEffect } from "react";
+import "./styles.css";
 
 export default function Home() {
+  // Variables
   const [minutes, setMinutes] = useState(25); // Pomodoro session starts with 25 minutes
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [isBreak, setIsBreak] = useState(false); // Toggle between work and break
-  const [completedPomodoros, setCompletedPomodoros] = useState(0); // Track completed Pomodoros
-  const [completedBreaks, setCompletedBreaks] = useState(0); // Track completed Breaks
+  const [type, setType] = useState("Pomodoro");
+
+
+  // UseEffects
+  useEffect(() => {
+    const endTime = localStorage.getItem("endTime");
+    const remainingTime = localStorage.getItem("remainingTime");
+    const type = localStorage.getItem("type");
+    setType(type || "Pomodoro");
+    if (remainingTime) {
+      const time = parseInt(remainingTime);
+      setMinutes(Math.floor(time / 60000));
+      setSeconds(Math.floor((time % 60000) / 1000));
+    }else if (endTime) {
+      const remainingTime = Math.max(0, new Date(endTime).getTime() - new Date().getTime());
+      if (remainingTime > 0) {
+        setIsActive(true);
+        setMinutes(Math.floor(remainingTime / 60000));
+        setSeconds(Math.floor((remainingTime % 60000) / 1000));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
 
     if (isActive) {
+      const endTime = new Date().getTime() + minutes * 60000 + seconds * 1000;
+      localStorage.setItem("endTime", new Date(endTime).toISOString());
+
       interval = setInterval(() => {
         if (seconds === 0) {
           if (minutes === 0) {
-            // Toggle between work and break
-            if (isBreak) {
-              setCompletedPomodoros((prev) => prev + 1); // Increment Pomodoro counter
-            } else {
-              setCompletedBreaks((prev) => prev + 1); // Increment Break counter
-            }
-            setIsBreak(!isBreak);
-            setMinutes(isBreak ? 25 : 5); // 25 minutes for work, 5 for break
-            setSeconds(0);
-            setIsActive(false); // Stop the timer
+            // Timer ends (Pomodoro or Break)
+            resetType(type);
           } else {
             setMinutes((prev) => prev - 1); // Decrease minutes
             setSeconds(59); // Reset seconds
@@ -42,22 +58,65 @@ export default function Home() {
     return () => {
       if (interval) clearInterval(interval); // Cleanup on component unmount
     };
-  }, [isActive, seconds, minutes, isBreak]);
+  }, [isActive, seconds, minutes]);
 
-  const startTimer = () => setIsActive(true);
-  const stopTimer = () => setIsActive(false);
-  const resetTimer = () => {
+  // Functions
+  const startTimer = () => {
+    setIsActive(true)
+    const endTime = new Date().getTime() + minutes * 60000 + seconds * 1000;
+    localStorage.setItem("endTime", new Date(endTime).toISOString());
+  };
+  const pauseTimer = () => {
+    localStorage.setItem("remainingTime", (minutes * 60000 + seconds * 1000).toString());
     setIsActive(false);
-    setMinutes(isBreak ? 5 : 25); // Reset to work or break session
-    setSeconds(0);
+  };
+  const resetTimer = () => {
+    resetType(type);
   };
 
   const formatTime = (time: number) => (time < 10 ? `0${time}` : time); // Format time for display
 
+  const resetType = (newType:string) => {
+    localStorage.setItem("type", newType);
+    localStorage.removeItem("endTime");
+    localStorage.removeItem("remainingTime");
+    setType(newType);
+    if (newType === "Pomodoro") {
+      setMinutes(25);
+    } else if (newType === "Short break") {
+      setMinutes(5);
+    } else {
+      setMinutes(15);
+    }
+    setSeconds(0);
+    setIsActive(false); // Stop the timer
+  }
+
+  const getBackgroundColor = () => {
+    if (type === "Pomodoro") {
+      return "#ba4949";
+    } else if (type === "Short break") {
+      return "#38858a";
+    } else {
+      return "#397097";
+    }
+  }
+
   return (
-    <div className="container">
+    <div className="container" style={{backgroundColor: getBackgroundColor()}}>
+      <div className="header">
+        <div className="box" onClick={()=>resetType("Pomodoro")}>
+          <h3>Pomodoro</h3>
+        </div>
+        <div className="box" onClick={()=>resetType("Short break")}>
+          <h3>Short break</h3>
+        </div>
+        <div className="box" onClick={()=>resetType("Long break")}>
+          <h3>Long break</h3>
+        </div>
+      </div>
       <div className="timer">
-        <h1>{isBreak ? "Break" : "Pomodoro Timer"}</h1>
+        <h1>{type}</h1>
         <div className="time-display">
           <h2>
             {formatTime(minutes)}:{formatTime(seconds)}
@@ -67,8 +126,8 @@ export default function Home() {
           <button className="button" onClick={startTimer} disabled={isActive}>
             Start
           </button>
-          <button className="button" onClick={stopTimer} disabled={!isActive}>
-            Stop
+          <button className="button" onClick={pauseTimer} disabled={!isActive}>
+            Pause
           </button>
           <button className="button" onClick={resetTimer}>
             Reset
@@ -77,89 +136,9 @@ export default function Home() {
       </div>
 
       <div className="statistics">
-        <h3>Statistics</h3>
-        <p>Completed Pomodoros: {completedPomodoros}</p>
-        <p>Completed Breaks: {completedBreaks}</p>
+        <h2>Statistics</h2>
       </div>
-
-      <style jsx>{`
-        .container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          background-color: #f4f4f9;
-          flex-direction: column;
-        }
-
-        .timer {
-          text-align: center;
-          padding: 20px;
-          background-color: #fff;
-          border-radius: 10px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          max-width: 400px;
-          width: 100%;
-          margin-bottom: 20px;
-        }
-
-        h1 {
-          font-size: 2rem;
-          color: #333;
-        }
-
-        .time-display h2 {
-          font-size: 3rem;
-          font-weight: bold;
-          margin: 20px 0;
-          color: #2f80ed;
-        }
-
-        .controls {
-          display: flex;
-          justify-content: space-around;
-        }
-
-        .button {
-          padding: 10px 20px;
-          font-size: 1rem;
-          color: #fff;
-          background-color: #2f80ed;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
-
-        .button:disabled {
-          background-color: #ddd;
-        }
-
-        .button:hover:not(:disabled) {
-          background-color: #1c6ed1;
-        }
-
-        .statistics {
-          text-align: center;
-          padding: 10px;
-          background-color: #fff;
-          border-radius: 10px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          max-width: 400px;
-          width: 100%;
-        }
-
-        .statistics h3 {
-          margin-bottom: 10px;
-          color: #333;
-        }
-
-        .statistics p {
-          margin: 5px 0;
-          font-size: 1.2rem;
-          color: #333;
-        }
-      `}</style>
     </div>
   );
 }
+
