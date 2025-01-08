@@ -2,17 +2,27 @@
 
 import { useState, useEffect } from "react";
 import "./styles.css";
+import { send } from "process";
 
+// Message the Android app
 async function fetchTokens(): Promise<string[]> {
   const response = await fetch('/api/saveToken', { method: 'GET' });
+  let tokens: string[] = [];
   if (!response.ok) {
-    throw new Error('Failed to fetch tokens');
+    // throw new Error('Failed to fetch tokens');
+    const storedTokens = localStorage.getItem('tokens');
+    if (storedTokens) {
+      tokens = JSON.parse(storedTokens);
+    } else {
+      throw new Error('Failed to fetch tokens');
+    }
+  } else {
+    tokens = await response.json();
   }
-  const tokens = await response.json();
   return tokens;
 }
 
-async function sendMessageToApp() {
+async function sendMessageToApp(data: { [key: string]: string }) {
   try {
     // Fetch the token from your Android app's API endpoint
     const tokens = await fetchTokens();
@@ -31,7 +41,7 @@ async function sendMessageToApp() {
       },
       body: JSON.stringify({
         token: token,
-        message: 'Hello from the website!',
+        data: data,
       }),
     });
 
@@ -49,6 +59,7 @@ async function sendMessageToApp() {
   }
 }
 
+// Main component
 export default function Home() {
   // Variables
   const [minutes, setMinutes] = useState(25); // Pomodoro session starts with 25 minutes
@@ -244,8 +255,14 @@ export default function Home() {
         <h2>Statistics</h2>
         <div className="statistics-box">
           <h3>Cycles within batch: {cycleWithinBatch}</h3>
-          <button className="button" onClick={sendMessageToApp}>
-            Send Message
+          <button className="button" onClick={()=>sendMessageToApp({ type: "Pomodoro" })}>
+            Pomodoro
+          </button>
+          <button className="button" onClick={()=>sendMessageToApp({ type: "Short break" })}>
+            Short break
+          </button>
+          <button className="button" onClick={()=>sendMessageToApp({ type: "Long break" })}>
+            Long break
           </button>
         </div>
       </div>

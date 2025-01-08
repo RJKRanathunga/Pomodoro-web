@@ -14,6 +14,7 @@ export default async function handler(req, res) {
       if (!tokens.includes(token)) {
         tokens.push(token);
       }
+      localStorage.setItem('tokens', JSON.stringify(tokens));
 
       console.log('Current tokens:', tokens);
       return res.status(200).json({ message: 'Token saved successfully' });
@@ -28,13 +29,3 @@ export default async function handler(req, res) {
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
-
-// // Add a GET method to retrieve all tokens
-// export async function getTokensHandler(req, res) {
-//   if (req.method === 'GET') {
-//     return res.status(200).json(tokens);
-//   } else {
-//     res.setHeader('Allow', ['GET']);
-//     res.status(405).end(`Method ${req.method} Not Allowed`);
-//   }
-// }

@@ -18,11 +18,10 @@ if (!admin.apps.length) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("'req.method', req.method");
   if (req.method === 'POST') {
-    const { token, message } = req.body;
+    const { token, data } = req.body;
 
-    if (!token || !message) {
+    if (!token || !data) {
       res.status(400).json({ success: false, error: 'Token and message are required' });
       return;
     }
@@ -30,10 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       await admin.messaging().send({
         token,
-        notification: {
-          title: 'Message from Website',
-          body: message,
-        },
+        data:data
       });
       res.status(200).json({ success: true, message: 'Message sent!' });
     } catch (error) {
