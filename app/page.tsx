@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import "./styles.css";
-import { send } from "process";
 
 // Message the Android app
 async function fetchTokens(): Promise<string[]> {
