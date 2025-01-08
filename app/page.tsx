@@ -9,12 +9,14 @@ async function fetchTokens(): Promise<string[]> {
   let tokens: string[] = [];
   if (!response.ok) {
     // throw new Error('Failed to fetch tokens');
-    const storedTokens = localStorage.getItem('tokens');
-    if (storedTokens) {
-      tokens = JSON.parse(storedTokens);
-    } else {
-      throw new Error('Failed to fetch tokens');
-    }
+    // const storedTokens = localStorage.getItem('tokens'); // TODO: Uncomment this line to use the stored tokens
+
+    // if (storedTokens) {
+    //   tokens = JSON.parse(storedTokens);
+    // } else {
+    //   throw new Error('Failed to fetch tokens');
+    // }
+    throw new Error('Failed to fetch tokens'); // TODO: Comment this line to use the stored tokens
   } else {
     tokens = await response.json();
   }

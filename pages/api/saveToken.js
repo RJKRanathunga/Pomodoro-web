@@ -3,10 +3,10 @@ let tokens = [];
 
 export default async function handler(req, res) {
     // Handle CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*');  // TODO: No need these things
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    
+
   if (req.method === 'POST') {
     const { token } = req.body;
     console.log('Token:', token);
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       if (!tokens.includes(token)) {
         tokens.push(token);
       }
-      localStorage.setItem('tokens', JSON.stringify(tokens));
+      // localStorage.setItem('tokens', JSON.stringify(tokens)); // TODO: Save tokens to a database
 
       console.log('Current tokens:', tokens);
       return res.status(200).json({ message: 'Token saved successfully' });
