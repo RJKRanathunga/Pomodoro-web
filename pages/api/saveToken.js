@@ -2,6 +2,11 @@
 let tokens = [];
 
 export default async function handler(req, res) {
+    // Handle CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
   if (req.method === 'POST') {
     const { token } = req.body;
     console.log('Token:', token);
