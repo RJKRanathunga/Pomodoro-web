@@ -3,6 +3,52 @@
 import { useState, useEffect } from "react";
 import "./styles.css";
 
+async function fetchTokens(): Promise<string[]> {
+  const response = await fetch('/api/saveToken', { method: 'GET' });
+  if (!response.ok) {
+    throw new Error('Failed to fetch tokens');
+  }
+  const tokens = await response.json();
+  return tokens;
+}
+
+async function sendMessageToApp() {
+  try {
+    // Fetch the token from your Android app's API endpoint
+    const tokens = await fetchTokens();
+
+    if (!tokens || tokens.length === 0) {
+      throw new Error('Token not found');
+    }
+    
+    // Use the first token for demonstration purposes
+    const token = tokens[0];
+
+    const response = await fetch('/api/sendMessage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: token,
+        message: 'Hello from the website!',
+      }),
+    });
+
+    const result = await response.json();
+    console.log(result);
+
+    if (result.success) {
+      alert('Message sent successfully!');
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to send message.');
+  }
+}
+
 export default function Home() {
   // Variables
   const [minutes, setMinutes] = useState(25); // Pomodoro session starts with 25 minutes
@@ -198,6 +244,9 @@ export default function Home() {
         <h2>Statistics</h2>
         <div className="statistics-box">
           <h3>Cycles within batch: {cycleWithinBatch}</h3>
+          <button className="button" onClick={sendMessageToApp}>
+            Send Message
+          </button>
         </div>
       </div>
     </div>

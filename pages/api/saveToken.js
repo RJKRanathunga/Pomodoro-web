@@ -1,0 +1,40 @@
+// Temporary storage for tokens (use a database in production)
+let tokens = [];
+
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    const { token } = req.body;
+    console.log('Token:', token);
+    if (!token) {
+      return res.status(400).json({ error: 'FCM token is required' });
+    }
+
+    try {
+      // Save the token (avoid duplicates)
+      if (!tokens.includes(token)) {
+        tokens.push(token);
+      }
+
+      console.log('Current tokens:', tokens);
+      return res.status(200).json({ message: 'Token saved successfully' });
+    } catch (error) {
+      console.error('Error saving token:', error);
+      return res.status(500).json({ error: 'Failed to save token' });
+    }
+  } else if (req.method === 'GET') {
+    return res.status(200).json(tokens);
+  } else {
+    res.setHeader('Allow', ['POST', 'GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
+
+// // Add a GET method to retrieve all tokens
+// export async function getTokensHandler(req, res) {
+//   if (req.method === 'GET') {
+//     return res.status(200).json(tokens);
+//   } else {
+//     res.setHeader('Allow', ['GET']);
+//     res.status(405).end(`Method ${req.method} Not Allowed`);
+//   }
+// }
