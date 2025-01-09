@@ -1,7 +1,6 @@
 import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
-  let tokens = [];
   const redis = new Redis({
     url: process.env.KV_REST_API_URL,
     token: process.env.KV_REST_API_TOKEN,
@@ -9,20 +8,28 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     const { token } = req.body;
-    console.log('Token:', token);
     if (!token) {
       return res.status(400).json({ error: 'FCM token is required' });
     }
 
     try {
-      // Save the token (avoid duplicates)
+      const storedTokens = await redis.get('FCM_tokens');
+      let tokens = [];
+      if (storedTokens) {
+        try {
+          tokens = JSON.parse(storedTokens);
+        } catch (error) {
+          console.error('Error parsing tokens:', error);
+          tokens = [storedTokens]; // Handle legacy data
+        }
+      }
+
+      // Add the new token if it doesn't already exist
       if (!tokens.includes(token)) {
         tokens.push(token);
+        await redis.set('FCM_tokens', JSON.stringify([token])); // Save back to Redis
       }
-      // localStorage.setItem('tokens', JSON.stringify(tokens));
-      await redis.set('FCM_tokens', JSON.stringify(tokens));
 
-      console.log('Current tokens:', tokens);
       return res.status(200).json({ message: 'Token saved successfully' });
     } catch (error) {
       console.error('Error saving token:', error);
@@ -30,15 +37,18 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'GET') {
     try {
-      if (tokens.length === 0) {
-        const storedTokens = await redis.get('FCM_tokens');
-        if (storedTokens) {
+      const storedTokens = await redis.get('FCM_tokens');
+      let tokens = [];
+      if (storedTokens) {
+        try {
           tokens = JSON.parse(storedTokens);
+        } catch (error) {
+          console.error('Error parsing tokens:', error);
+          tokens = [storedTokens]; // Handle legacy data
         }
-        return res.status(200).json(storedTokens ? JSON.parse(storedTokens) : []);
-      } else {
-        return res.status(200).json(tokens);
       }
+
+      return res.status(200).json(tokens);
     } catch (error) {
       console.error('Error fetching tokens:', error);
       return res.status(500).json({ error: 'Failed to fetch tokens' });
