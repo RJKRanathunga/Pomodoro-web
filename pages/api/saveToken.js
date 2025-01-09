@@ -1,10 +1,10 @@
 import { Redis } from '@upstash/redis';
 
-// const redis = new Redis({
-//   url: process.env.KV_REST_API_URL,
-//   token: process.env.KV_REST_API_TOKEN,
-// });
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+// const redis = Redis.fromEnv();
 // Temporary storage for tokens (use a database in production)
 let tokens = [];
 
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         tokens.push(token);
       }
       // localStorage.setItem('tokens', JSON.stringify(tokens));
-      await redis.set('tokens', JSON.stringify(tokens));
+      await redis.set('FCM_tokens', JSON.stringify(tokens));
 
       console.log('Current tokens:', tokens);
       return res.status(200).json({ message: 'Token saved successfully' });

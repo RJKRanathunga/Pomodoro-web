@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import "./styles.css";
 import { Redis } from '@upstash/redis';
 
-// const redis = new Redis({
-//   url: process.env.KV_REST_API_URL,
-//   token: process.env.KV_REST_API_TOKEN,
-// })
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+})
+// const redis = Redis.fromEnv();
 
 // await redis.set('foo', 'bar');
 // const data = await redis.get('foo');
@@ -18,7 +18,7 @@ async function fetchTokens(): Promise<string[]> {
   const response = await fetch('/api/saveToken', { method: 'GET' });
   let tokens: string[] = [];
   if (!response.ok) {
-    const storedTokens = await redis.get('tokens');
+    const storedTokens = await redis.get('FCM_tokens');
 
     if (storedTokens) {
       tokens = JSON.parse(storedTokens as string) as string[];
