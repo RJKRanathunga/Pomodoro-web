@@ -1,12 +1,11 @@
 import { Redis } from '@upstash/redis';
 
-let tokens = [];
-
 export default async function handler(req, res) {
-    const redis = new Redis({
-      url: process.env.KV_REST_API_URL,
-      token: process.env.KV_REST_API_TOKEN,
-    });
+  let tokens = [];
+  const redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
 
   if (req.method === 'POST') {
     const { token } = req.body;
@@ -30,11 +29,19 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to save token' });
     }
   } else if (req.method === 'GET') {
-    if (tokens.length === 0) {
-      const storedTokens = await redis.get('FCM_tokens');
-      return res.status(200).json(storedTokens ? JSON.parse(storedTokens) : []);
-    } else {
-      return res.status(200).json(tokens);
+    try {
+      if (tokens.length === 0) {
+        const storedTokens = await redis.get('FCM_tokens');
+        if (storedTokens) {
+          tokens = JSON.parse(storedTokens);
+        }
+        return res.status(200).json(storedTokens ? JSON.parse(storedTokens) : []);
+      } else {
+        return res.status(200).json(tokens);
+      }
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+      return res.status(500).json({ error: 'Failed to fetch tokens' });
     }
   } else {
     res.setHeader('Allow', ['POST', 'GET']);
