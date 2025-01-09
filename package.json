@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@upstash/redis": "^1.34.3",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "next": "15.1.3",

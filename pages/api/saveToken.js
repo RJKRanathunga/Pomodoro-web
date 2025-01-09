@@ -1,11 +1,17 @@
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 // Temporary storage for tokens (use a database in production)
 let tokens = [];
 
 export default async function handler(req, res) {
     // Handle CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');  // TODO: No need these things
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    // res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'POST') {
     const { token } = req.body;
@@ -19,7 +25,8 @@ export default async function handler(req, res) {
       if (!tokens.includes(token)) {
         tokens.push(token);
       }
-      // localStorage.setItem('tokens', JSON.stringify(tokens)); // TODO: Save tokens to a database
+      // localStorage.setItem('tokens', JSON.stringify(tokens));
+      await redis.set('tokens', JSON.stringify(tokens));
 
       console.log('Current tokens:', tokens);
       return res.status(200).json({ message: 'Token saved successfully' });

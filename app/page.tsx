@@ -2,21 +2,28 @@
 
 import { useState, useEffect } from "react";
 import "./styles.css";
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+})
+
+// await redis.set('foo', 'bar');
+// const data = await redis.get('foo');
 
 // Message the Android app
 async function fetchTokens(): Promise<string[]> {
   const response = await fetch('/api/saveToken', { method: 'GET' });
   let tokens: string[] = [];
   if (!response.ok) {
-    // throw new Error('Failed to fetch tokens');
-    // const storedTokens = localStorage.getItem('tokens'); // TODO: Uncomment this line to use the stored tokens
+    const storedTokens = await redis.get('tokens');
 
-    // if (storedTokens) {
-    //   tokens = JSON.parse(storedTokens);
-    // } else {
-    //   throw new Error('Failed to fetch tokens');
-    // }
-    throw new Error('Failed to fetch tokens'); // TODO: Comment this line to use the stored tokens
+    if (storedTokens) {
+      tokens = JSON.parse(storedTokens as string) as string[];
+    } else {
+      throw new Error('Failed to fetch tokens');
+    }
   } else {
     tokens = await response.json();
   }
