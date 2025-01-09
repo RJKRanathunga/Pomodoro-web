@@ -1,14 +1,8 @@
 import { Redis } from '@upstash/redis';
 
-// const redis = Redis.fromEnv();
-// Temporary storage for tokens (use a database in production)
 let tokens = [];
 
 export default async function handler(req, res) {
-    // Handle CORS
-    // res.setHeader('Access-Control-Allow-Origin', '*');
-    // res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-    // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     const redis = new Redis({
       url: process.env.KV_REST_API_URL,
       token: process.env.KV_REST_API_TOKEN,
@@ -36,7 +30,12 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to save token' });
     }
   } else if (req.method === 'GET') {
-    return res.status(200).json(tokens);
+    if (tokens.length === 0) {
+      const storedTokens = await redis.get('FCM_tokens');
+      return res.status(200).json(JSON.parse(storedTokens));
+    } else {
+      return res.status(200).json(tokens);
+    }
   } else {
     res.setHeader('Allow', ['POST', 'GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
