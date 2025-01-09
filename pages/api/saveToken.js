@@ -27,6 +27,7 @@ export default async function handler(req, res) {
         tokens.push(token);
       }
       // localStorage.setItem('tokens', JSON.stringify(tokens));
+      await redis.ping();
       await redis.set('FCM_tokens', JSON.stringify(tokens));
 
       console.log('Current tokens:', tokens);

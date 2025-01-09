@@ -18,6 +18,7 @@ async function fetchTokens(): Promise<string[]> {
   const response = await fetch('/api/saveToken', { method: 'GET' });
   let tokens: string[] = [];
   if (!response.ok) {
+    await redis.ping();
     const storedTokens = await redis.get('FCM_tokens');
 
     if (storedTokens) {
