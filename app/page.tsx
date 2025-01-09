@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import "./styles.css";
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-})
+// const redis = new Redis({
+//   url: process.env.KV_REST_API_URL,
+//   token: process.env.KV_REST_API_TOKEN,
+// })
+const redis = Redis.fromEnv();
 
 // await redis.set('foo', 'bar');
 // const data = await redis.get('foo');

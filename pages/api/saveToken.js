@@ -1,9 +1,10 @@
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
+// const redis = new Redis({
+//   url: process.env.KV_REST_API_URL,
+//   token: process.env.KV_REST_API_TOKEN,
+// });
+const redis = Redis.fromEnv();
 // Temporary storage for tokens (use a database in production)
 let tokens = [];
 
