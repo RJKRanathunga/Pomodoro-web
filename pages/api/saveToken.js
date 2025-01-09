@@ -38,21 +38,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'GET') {
     try {
       const storedTokens = await redis.get('FCM_tokens');
-      let tokens = [];
-      console.log('storedTokens:', storedTokens);
-      console.log('storedTokens type:', typeof storedTokens);
-      console.log('storedTokens 1st:', storedTokens[0]);
-      console.log('storedTokens json:', JSON.parse(storedTokens));
-      if (storedTokens) {
-        try {
-          tokens = JSON.parse(storedTokens);
-        } catch (error) {
-          console.error('Error parsing tokens:', error);
-          tokens = [storedTokens]; // Handle legacy data
-        }
-      }
-
-      return res.status(200).json(tokens);
+      return res.status(200).json(storedTokens);
     } catch (error) {
       console.error('Error fetching tokens:', error);
       return res.status(500).json({ error: 'Failed to fetch tokens' });
