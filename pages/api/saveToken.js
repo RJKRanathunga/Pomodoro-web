@@ -39,6 +39,10 @@ export default async function handler(req, res) {
     try {
       const storedTokens = await redis.get('FCM_tokens');
       let tokens = [];
+      console.log('storedTokens:', storedTokens);
+      console.log('storedTokens type:', typeof storedTokens);
+      console.log('storedTokens 1st:', storedTokens[0]);
+      console.log('storedTokens json:', JSON.parse(storedTokens));
       if (storedTokens) {
         try {
           tokens = JSON.parse(storedTokens);
