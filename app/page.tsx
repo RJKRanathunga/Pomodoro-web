@@ -6,7 +6,7 @@ import { sendMessageToApp,showNotification } from "./utils/output Methods";
 
 export default function Home() {
   // Variables
-  const [type, setType] = useState(localStorage.getItem("type") || "Pomodoro");
+  const [type, setType] = useState("Pomodoro"); // Pomodoro, Short break, Long break
   const [isActive, setIsActive] = useState(false);
   const [endTime, setEndTime] = useState(0);
 
