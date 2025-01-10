@@ -177,6 +177,7 @@ export default function Home() {
     localStorage.removeItem("endTime");
     localStorage.removeItem("remainingTime");
     setType(newType);
+    sendMessageToApp({ type: newType });
     if (newType === "Pomodoro") {
       setMinutes(25);
     } else if (newType === "Short break") {
@@ -247,18 +248,7 @@ export default function Home() {
 
       <div className="statistics">
         <h2>Statistics</h2>
-        <div className="statistics-box">
-          <h3>Cycles within batch: {cycleWithinBatch}</h3>
-          <button className="button" onClick={()=>sendMessageToApp({ type: "Pomodoro" })}>
-            Pomodoro
-          </button>
-          <button className="button" onClick={()=>sendMessageToApp({ type: "Short break" })}>
-            Short break
-          </button>
-          <button className="button" onClick={()=>sendMessageToApp({ type: "Long break" })}>
-            Long break
-          </button>
-        </div>
+        <p>Cycles within batch: {cycleWithinBatch}</p>
       </div>
     </div>
   );
