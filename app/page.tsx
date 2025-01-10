@@ -30,6 +30,9 @@ export default function Home() {
     const storedEndTime = localStorage.getItem("endTime");
     setEndTime(storedEndTime ? new Date(storedEndTime).getTime() : 0);
 
+    const prevCycleWithinBatch = localStorage.getItem("cycleWithinBatch");
+    setCycleWithinBatch(prevCycleWithinBatch ? parseInt(prevCycleWithinBatch) : 0);
+
     const remainingTime = localStorage.getItem("remainingTime"); // If this is available, the user has paused the timer
    
     let duration = 0;
@@ -112,10 +115,12 @@ export default function Home() {
         if (newCycle === 4) {
           resetType("Long break");
           showNotification("Time for a long break!");
+          localStorage.setItem("cycleWithinBatch", "0");
           return 0;
         }
         resetType("Short break");
         showNotification("Time for a quick break!");
+        localStorage.setItem("cycleWithinBatch", newCycle.toString());
         return newCycle;
       });
     } else {
