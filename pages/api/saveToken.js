@@ -14,20 +14,11 @@ export default async function handler(req, res) {
 
     try {
       const storedTokens = await redis.get('FCM_tokens');
-      let tokens = [];
-      if (storedTokens) {
-        try {
-          tokens = JSON.parse(storedTokens);
-        } catch (error) {
-          console.error('Error parsing tokens:', error);
-          tokens = [storedTokens]; // Handle legacy data
-        }
-      }
 
       // Add the new token if it doesn't already exist
-      if (!tokens.includes(token)) {
-        tokens.push(token);
-        await redis.set('FCM_tokens', JSON.stringify([token])); // Save back to Redis
+      if (!storedTokens.includes(token)) {
+        storedTokens.push(token);
+        await redis.set('FCM_tokens', JSON.stringify(storedTokens)); // Save back to Redis
       }
 
       return res.status(200).json({ message: 'Token saved successfully' });
