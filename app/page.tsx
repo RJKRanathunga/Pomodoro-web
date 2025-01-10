@@ -8,10 +8,7 @@ export default function Home() {
   // Variables
   const [type, setType] = useState("Pomodoro");
   const [isActive, setIsActive] = useState(false);
-  const [endTime, setEndTime] = useState(() => {
-    const storedEndTime = localStorage.getItem("endTime");
-    return storedEndTime ? new Date(storedEndTime).getTime() : 0;
-  });
+  const [endTime, setEndTime] = useState(0);
 
   const [minutes, setMinutes] = useState(25); // Pomodoro session starts with 25 minutes
   const [seconds, setSeconds] = useState(0);
@@ -29,6 +26,9 @@ export default function Home() {
   useEffect(() => { // Implement all necessary data to current session
     const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
+
+    const storedEndTime = localStorage.getItem("endTime");
+    setEndTime(storedEndTime ? new Date(storedEndTime).getTime() : 0);
 
     const remainingTime = localStorage.getItem("remainingTime"); // If this is available, the user has paused the timer
    
