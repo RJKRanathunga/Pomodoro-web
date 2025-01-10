@@ -2,66 +2,21 @@
 
 import { useState, useEffect } from "react";
 import "./styles.css";
+import { sendMessageToApp,showNotification } from "./utils/output Methods";
 
-// Message the Android app
-async function fetchTokens(): Promise<string[]> {
-
-  const response = await fetch('/api/saveToken', { method: 'GET' });
-  let tokens: string[] = [];
-  if (!response.ok) {
-      throw new Error('Failed to fetch tokens');
-  } else {
-    tokens = await response.json();
-  }
-  return tokens;
-}
-
-async function sendMessageToApp(data: { [key: string]: string }) {
-  try {
-    // Fetch the token from your Android app's API endpoint
-    const tokens = await fetchTokens();
-
-    if (!tokens || tokens.length === 0) {
-      throw new Error('Token not found');
-    }
-    
-    // Use the first token for demonstration purposes
-    const token = tokens[0];
-
-    const response = await fetch('/api/sendMessage', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        token: token,
-        data: data,
-      }),
-    });
-
-    const result = await response.json();
-    console.log(result);
-
-    if (result.success) {
-      alert('Message sent successfully!');
-    } else {
-      alert(`Error: ${result.error}`);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to send message.');
-  }
-}
-
-// Main component
 export default function Home() {
   // Variables
+  const [type, setType] = useState("Pomodoro");
+  const [isActive, setIsActive] = useState(false);
+  const [endTime, setEndTime] = useState(() => {
+    const storedEndTime = localStorage.getItem("endTime");
+    return storedEndTime ? new Date(storedEndTime).getTime() : 0;
+  });
+
   const [minutes, setMinutes] = useState(25); // Pomodoro session starts with 25 minutes
   const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [type, setType] = useState("Pomodoro");
-  const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
 
+  const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
 
   // UseEffects
   useEffect(() => {
@@ -71,83 +26,80 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    const endTime = localStorage.getItem("endTime");
-    const remainingTime = localStorage.getItem("remainingTime");
-    const prevType = localStorage.getItem("type");
-    const lastInteraction = localStorage.getItem("lastInteraction");
+  useEffect(() => { // Implement all necessary data to current session
+    const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
+
+    const remainingTime = localStorage.getItem("remainingTime"); // If this is available, the user has paused the timer
    
     let duration = 0;
-    if (lastInteraction) {
-      const lastInteractionTime = new Date(lastInteraction).getTime();
-      const currentTime = new Date().getTime();
+    if (remainingTime) { // User has paused the timer; the only place where remainingTime is required
+      // lastInteraction = endTime - remainingTime
+      const lastInteractionTime = endTime- parseInt(remainingTime);
+      const currentTime = Date.now();
       duration = currentTime - lastInteractionTime;
-      if (duration >= 5*60*1000) {
-        resetType("Pomodoro");
-      } else if (duration >= 25*60*1000) {
+      if (duration >= 25*60*1000) {
         resetType("Pomodoro");
         setCycleWithinBatch(0);
+      } else if (duration >= 5*60*1000) {
+        resetType("Pomodoro");
+      } else { // Set the timer to the remaining time
+        setMinutes(Math.floor(parseInt(remainingTime) / 60000));
+        setSeconds(Math.floor((parseInt(remainingTime) % 60000) / 1000));
+        setIsActive(false);
       }
-      localStorage.removeItem("lastInteraction");
-    }
-
-    if (remainingTime && duration < 5*60*1000) {
-      const time = parseInt(remainingTime);
-      setMinutes(Math.floor(time / 60000));
-      setSeconds(Math.floor((time % 60000) / 1000));
-    }else if (endTime) {
-      const remainingTime = Math.max(0, new Date(endTime).getTime() - new Date().getTime());
-      if (remainingTime > 0) {
-        setIsActive(true);
+    } else{ // User has not paused the timer but refreshed or closed the page
+      if (endTime > Date.now()) { // Timer is still active
+        const remainingTime = Math.max(0,endTime - Date.now());
         setMinutes(Math.floor(remainingTime / 60000));
         setSeconds(Math.floor((remainingTime % 60000) / 1000));
+        setIsActive(true);
       }
     }
   }, []);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-
+  useEffect(() => { // Timer logic
+    let interval: number | undefined;
+  
     if (isActive) {
-      const endTime = new Date().getTime() + minutes * 60000 + seconds * 1000;
-      localStorage.setItem("endTime", new Date(endTime).toISOString());
-
-      interval = setInterval(() => {
-        if (seconds === 0) {
-          if (minutes === 0) {
-            // Timer ends (Pomodoro or Break)
-            gotoNextType();
-          } else {
-            setMinutes((prev) => prev - 1); // Decrease minutes
-            setSeconds(59); // Reset seconds
-          }
-        } else {
-          setSeconds((prev) => prev - 1); // Decrease seconds
+      interval = window.setInterval(() => {
+        const currentTime = Date.now();
+        const remainingTime = Math.max(0, endTime - currentTime); // Calculate remaining time
+  
+        const remainingMinutes = Math.floor(remainingTime / 60000); // Convert to minutes
+        const remainingSeconds = Math.floor((remainingTime % 60000) / 1000); // Convert to seconds
+  
+        setMinutes(remainingMinutes);
+        setSeconds(remainingSeconds);
+  
+        if (remainingTime <= 0) {
+          clearInterval(interval);
+          gotoNextType(); // Timer ends
         }
       }, 1000);
     } else {
-      if (interval) clearInterval(interval); // Stop the timer when not active
+      if (interval !== undefined) clearInterval(interval); // Stop the timer when not active
     }
-
+  
     return () => {
-      if (interval) clearInterval(interval); // Cleanup on component unmount
+      if (interval !== undefined) clearInterval(interval); // Cleanup on component unmount
     };
-  }, [isActive, seconds, minutes]);
+  }, [isActive, endTime]);
 
   // Functions
   const startTimer = () => {
     setIsActive(true)
-    const endTime = new Date().getTime() + minutes * 60000 + seconds * 1000;
+    const endTime = Date.now() + minutes * 60000 + seconds * 1000;
     localStorage.setItem("endTime", new Date(endTime).toISOString());
+    localStorage.removeItem("remainingTime");
   };
   const pauseTimer = () => {
     localStorage.setItem("remainingTime", (minutes * 60000 + seconds * 1000).toString());
     setIsActive(false);
-    localStorage.setItem("lastInteraction", new Date().toISOString());
   };
   const resetTimer = () => {
     resetType(type);
+    localStorage.removeItem("remainingTime"); // remainingTime will only available the last interaction was a pause
   };
 
   const formatTime = (time: number) => (time < 10 ? `0${time}` : time); // Format time for display
@@ -169,13 +121,12 @@ export default function Home() {
       resetType("Pomodoro");
       showNotification("Time to work!");
     }
-    localStorage.removeItem("lastInteraction");
   }
 
   const resetType = (newType:string) => {
     localStorage.setItem("type", newType);
     localStorage.removeItem("endTime");
-    localStorage.removeItem("remainingTime");
+    localStorage.removeItem("remainingTime"); // In case the user has paused the timer and came after 5 minutes
     setType(newType);
     sendMessageToApp({ type: newType });
     if (newType === "Pomodoro") {
@@ -188,20 +139,6 @@ export default function Home() {
     setSeconds(0);
     setIsActive(false); // Stop the timer
   }
-
-  const showNotification = (message: string) => {
-    if (Notification.permission === "granted") {
-      try {
-        new Notification("Pomodoro Timer", {
-          body: message,
-          // icon: "icon.png", // Ensure this path is correct
-          requireInteraction: true, // Key option for persistent notifications
-        });
-      } catch (error) {
-        console.error("Error creating notification:", error);
-      }
-    }
-  };
 
   const getBackgroundColor = () => {
     if (type === "Pomodoro") {
