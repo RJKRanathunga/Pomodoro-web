@@ -89,8 +89,9 @@ export default function Home() {
   // Functions
   const startTimer = () => {
     setIsActive(true)
-    const endTime = Date.now() + minutes * 60000 + seconds * 1000;
-    localStorage.setItem("endTime", new Date(endTime).toISOString());
+    const newEndTime = Date.now() + minutes * 60000 + seconds * 1000;
+    setEndTime(newEndTime);
+    localStorage.setItem("endTime", new Date(newEndTime).toISOString());
     localStorage.removeItem("remainingTime");
   };
   const pauseTimer = () => {
