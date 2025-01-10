@@ -115,11 +115,13 @@ export default function Home() {
         if (newCycle === 4) {
           resetType("Long break");
           showNotification("Time for a long break!");
+          sendMessageToApp({ type: "Long break" });
           localStorage.setItem("cycleWithinBatch", "0");
           return 0;
         }
         resetType("Short break");
         showNotification("Time for a quick break!");
+        sendMessageToApp({ type: "Short break" });
         localStorage.setItem("cycleWithinBatch", newCycle.toString());
         return newCycle;
       });
@@ -134,7 +136,6 @@ export default function Home() {
     localStorage.removeItem("endTime");
     localStorage.removeItem("remainingTime"); // In case the user has paused the timer and came after 5 minutes
     setType(newType);
-    sendMessageToApp({ type: newType });
     if (newType === "Pomodoro") {
       setMinutes(25);
     } else if (newType === "Short break") {
