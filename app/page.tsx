@@ -43,6 +43,7 @@ export default function Home() {
       duration = currentTime - lastInteractionTime;
       if (duration >= 25*60*1000) {
         resetType("Pomodoro");
+        localStorage.setItem("cycleWithinBatch", "0");
         setCycleWithinBatch(0);
       } else if (duration >= 5*60*1000) {
         resetType("Pomodoro");
@@ -117,12 +118,14 @@ export default function Home() {
           showNotification("Time for a long break!");
           sendMessageToApp({ type: "Long break" });
           localStorage.setItem("cycleWithinBatch", "0");
+          setCycleWithinBatch(0);
           return 0;
         }
         resetType("Short break");
         showNotification("Time for a quick break!");
         sendMessageToApp({ type: "Short break" });
         localStorage.setItem("cycleWithinBatch", newCycle.toString());
+        setCycleWithinBatch(newCycle);
         return newCycle;
       });
     } else {
