@@ -34,7 +34,7 @@ export default function Home() {
     setCycleWithinBatch(prevCycleWithinBatch ? parseInt(prevCycleWithinBatch) : 0);
 
     const remainingTime = localStorage.getItem("remainingTime"); // If this is available, the user has paused the timer
-   
+    const endTime = storedEndTime ? new Date(storedEndTime).getTime() : 0; // setEndTime does not update the state immediately
     let duration = 0;
     if (remainingTime) { // User has paused the timer; the only place where remainingTime is required
       // lastInteraction = endTime - remainingTime
