@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import "./styles.css";
+import "./Advance styles/animations.css"
 import { sendMessageToApp,showNotification } from "./utils/output Methods";
+import { GrPowerReset } from "react-icons/gr";
 
 export default function Home() {
   // Variables
@@ -61,6 +63,17 @@ export default function Home() {
       }
     }
   }, []);
+
+  useEffect(()=>{
+    const button = document.getElementById('startButton');
+
+    // Example: Toggle the `data-active` attribute on click
+    if (button) {
+      button.addEventListener('click', () => {
+        button.setAttribute('data-active', (!isActive).toString());
+      });
+    }  
+  },[isActive])
 
   useEffect(() => { // Timer logic
     let interval: number | undefined;
@@ -181,15 +194,10 @@ export default function Home() {
           </h2>
         </div>
         <div className="controls">
-          <button className="button" onClick={startTimer} disabled={isActive}>
-            Start
+          <button id="startButton" className="start-button" data-active="false" onClick={isActive? pauseTimer : startTimer}>
+            {!isActive? "Start":"Pause"}
           </button>
-          <button className="button" onClick={pauseTimer} disabled={!isActive}>
-            Pause
-          </button>
-          <button className="button" onClick={resetTimer}>
-            Reset
-          </button>
+          <GrPowerReset className="reset-button" onClick={resetTimer} size={50}/>
         </div>
       </div>
 
