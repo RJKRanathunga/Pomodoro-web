@@ -28,6 +28,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => { // Implement all necessary data to current session
+    const fetchData = async () => { // TODO:
+      const response = await fetch('/api/redisClient');
+        const result = await response.json();
+        consle.log(result);
+      if (result) {
+        setActiveTimeSegments(result);
+      }
+    };
+  
+    fetchData(); // Call the async function inside useEffect
+
     const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
 
@@ -210,6 +221,7 @@ export default function Home() {
       <div className="statistics">
         <h2>Statistics</h2>
         <p>Cycles within batch: {cycleWithinBatch}</p>
+        <button className="button" onClick={()=>console.log(activeTimeSegments)}>worktime</button>
       </div>
     </div>
   );
