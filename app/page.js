@@ -5,6 +5,7 @@ import "./styles.css";
 import "./Advance styles/animations.css"
 import { sendMessageToApp,showNotification } from "./utils/output Methods";
 import { GrPowerReset } from "react-icons/gr";
+import { getMinutes_fromMidnight,addStartTime,addEndTime } from "./data/store data";
 
 export default function Home() {
   // Variables
@@ -16,6 +17,7 @@ export default function Home() {
   const [seconds, setSeconds] = useState(0);
 
   const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
+  const [activeTimeSegments, setActiveTimeSegments] = useState([]);
 
   // UseEffects
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function Home() {
   },[isActive])
 
   useEffect(() => { // Timer logic
-    let interval: number | undefined;
+    let interval;
   
     if (isActive) {
       interval = window.setInterval(() => {
@@ -110,17 +112,20 @@ export default function Home() {
     setEndTime(newEndTime);
     localStorage.setItem("endTime", new Date(newEndTime).toISOString());
     localStorage.removeItem("remainingTime");
+    addStartTime(setActiveTimeSegments);
   };
   const pauseTimer = () => {
     localStorage.setItem("remainingTime", (minutes * 60000 + seconds * 1000).toString());
     setIsActive(false);
+    addEndTime(setActiveTimeSegments);
   };
   const resetTimer = () => {
     resetType(type);
     localStorage.removeItem("remainingTime"); // remainingTime will only available the last interaction was a pause
+    addEndTime(setActiveTimeSegments);
   };
 
-  const formatTime = (time: number) => (time < 10 ? `0${time}` : time); // Format time for display
+  const formatTime = (time) => (time < 10 ? `0${time}` : time); // Format time for display
 
   const gotoNextType = () => {
     if (type === "Pomodoro") {
@@ -147,13 +152,14 @@ export default function Home() {
     }
   }
 
-  const resetType = (newType:string) => {
+  const resetType = (newType) => {
     localStorage.setItem("type", newType);
     localStorage.removeItem("endTime");
     localStorage.removeItem("remainingTime"); // In case the user has paused the timer and came after 5 minutes
     setType(newType);
     if (newType === "Pomodoro") {
       setMinutes(25);
+      addEndTime(setActiveTimeSegments);
     } else if (newType === "Short break") {
       setMinutes(5);
     } else {
