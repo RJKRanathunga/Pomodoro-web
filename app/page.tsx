@@ -175,35 +175,41 @@ export default function Home() {
 
   return (
     <div className="container" style={{backgroundColor: getBackgroundColor()}}>
-      <div className="header">
-        <div className="box" onClick={()=>resetType("Pomodoro")}>
-          <h3>Pomodoro</h3>
-        </div>
-        <div className="box" onClick={()=>resetType("Short break")}>
-          <h3>Short break</h3>
-        </div>
-        <div className="box" onClick={()=>resetType("Long break")}>
-          <h3>Long break</h3>
-        </div>
+      <div className="options">
+        <button className="options-button">Report</button>
+        <button className="options-button">Settings</button>
       </div>
-      <div className="timer">
-        <h1>{type}</h1>
-        <div className="time-display">
-          <h2>
-            {formatTime(minutes)}:{formatTime(seconds)}
-          </h2>
+      <div className="main-container">
+        <div className="header">
+          <div className="box" onClick={()=>resetType("Pomodoro")}>
+            <h3>Pomodoro</h3>
+          </div>
+          <div className="box" onClick={()=>resetType("Short break")}>
+            <h3>Short break</h3>
+          </div>
+          <div className="box" onClick={()=>resetType("Long break")}>
+            <h3>Long break</h3>
+          </div>
         </div>
-        <div className="controls">
-          <button id="startButton" className="start-button" data-active="false" onClick={isActive? pauseTimer : startTimer}>
-            {!isActive? "Start":"Pause"}
-          </button>
-          <GrPowerReset className="reset-button" onClick={resetTimer} size={50}/>
+        <div className="timer">
+          <h1>{type}</h1>
+          <div className="time-display">
+            <h2>
+              {formatTime(minutes)}:{formatTime(seconds)}
+            </h2>
+          </div>
+          <div className="controls">
+            <button id="startButton" className="start-button" data-active="false" onClick={isActive? pauseTimer : startTimer}>
+              {!isActive? "Start":"Pause"}
+            </button>
+            <GrPowerReset className="reset-button" onClick={resetTimer} size={50}/>
+          </div>
         </div>
-      </div>
 
-      <div className="statistics">
-        <h2>Statistics</h2>
-        <p>Cycles within batch: {cycleWithinBatch}</p>
+        <div className="statistics">
+          <h2>Statistics</h2>
+          <p>Cycles within batch: {cycleWithinBatch}</p>
+        </div>
       </div>
     </div>
   );
