@@ -6,6 +6,7 @@ import "./Advance styles/animations.css"
 import { sendMessageToApp,showNotification } from "./utils/output Methods";
 import { GrPowerReset } from "react-icons/gr";
 import { addStartTime,addEndTime,fetch_today_report_data } from "./data/store data";
+import Overlay from "./secondary screens/Overlay";
 
 export default function Home() {
   // Variables
@@ -18,6 +19,8 @@ export default function Home() {
 
   const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
   const [activeTimeSegments, setActiveTimeSegments] = useState([]);
+
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
 
   // UseEffects
   useEffect(() => {
@@ -181,10 +184,14 @@ export default function Home() {
     }
   }
 
+  const toggleOverlay = () => {
+    setIsOverlayVisible(!isOverlayVisible);
+  };
+
   return (
     <div className="container" style={{backgroundColor: getBackgroundColor()}}>
       <div className="options">
-        <button className="options-button">Report</button>
+        <button className="options-button" onClick={toggleOverlay}>Report</button>
         <button className="options-button">Settings</button>
       </div>
       <div className="main-container">
@@ -219,6 +226,9 @@ export default function Home() {
           <p>Cycles within batch: {cycleWithinBatch}</p>
         </div>
       </div>
+
+      <Overlay isOverlayVisible={isOverlayVisible} toggleOverlay={toggleOverlay} />
+
     </div>
   );
 }
