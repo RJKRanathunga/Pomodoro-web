@@ -43,3 +43,46 @@
     top: 3px;
     box-shadow: none;
 }
+
+
+/* Settings and Report */
+.options{
+    display: flex;
+    justify-content:flex-end;
+    flex-direction: row;
+    align-items: end;
+    align-content: end;
+    margin: 20px 100px 50px 0;
+  }
+  
+  /* .options-box{
+    background-color: #2eb45a;
+    border-radius: 10px;
+    margin:0 10px 0 10px
+  } */
+  
+  .options-button {
+    color: #000000;
+    background-color: white;
+    border: 0;
+    outline: var(--border);
+    padding: 0.5rem 1rem;
+    font-size: 1.3rem;
+    font-family: monospace;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.6); /* darken(dodgerblue, 40%) */
+    transition: all 0.3s;
+    cursor: pointer;
+    border-radius: 5px;
+    border-bottom: 4px solid rgba(192, 192, 192, 0.7); /* lighten(gray, 70%) */
+    margin:0 20px
+  }
+  
+  .options-button:hover {
+    box-shadow: 0px 15px 25px -5px rgba(0, 0, 0, 0.6); /* darken(dodgerblue, 40%) */
+    transform: scale(1.03);
+  }
+  
+  .options-button:active {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7); /* darken(dodgerblue, 30%) */
+    transform: scale(0.98);
+  }
