@@ -10,8 +10,8 @@ async function fetch_today_report_data(setActiveTimeSegments) {
   const key = "activeTimeSegments"; // Replace with the actual key or a variable holding the key
   const response = await fetch(`/api/redisClient?key=${key}`);
   const result = await response.json();
-  if (result) {
-    setActiveTimeSegments(result);
+  if (result.value) {
+    setActiveTimeSegments([result.value]);
   }
 }
 
