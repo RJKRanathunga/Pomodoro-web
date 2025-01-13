@@ -77,7 +77,7 @@ export default function Home() {
         button.setAttribute('data-active', (!isActive).toString());
       });
     }  
-  },[isActive])
+  },[isActive,type])
 
   useEffect(() => { // Timer logic
     let interval;

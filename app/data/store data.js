@@ -34,6 +34,7 @@ async function storeData(key, value) {
 function addStartTime(setActiveTimeSegments) {
   const minutesFromMidnight = getMinutes_fromMidnight();
   setActiveTimeSegments(prevSegments => {
+    console.log("prevSegments: ",prevSegments);
     const newTimeSegments = [...(prevSegments || []), { start: minutesFromMidnight, end: 0 }];
     storeData("activeTimeSegments", newTimeSegments); // Store the updated segments in Redis
     return newTimeSegments;
