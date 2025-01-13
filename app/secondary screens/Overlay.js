@@ -1,13 +1,8 @@
 import React from 'react';
 import './overlayStyles.css';
 
-const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
-  const workTimes = [
-    { start: 352, end: 359 },
-    { start: 456, end: 557 },
-    { start: 657, end: 757 },
-    { start: 865, end: 965 }
-  ];
+const Overlay = ({ isOverlayVisible, toggleOverlay, workTimeSegments }) => {
+  const workTimes = workTimeSegments
 
   const totalMinutesInDay = 24 * 60;
 
