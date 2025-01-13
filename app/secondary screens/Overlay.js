@@ -2,13 +2,28 @@ import React from 'react';
 import './overlayStyles.css';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay, workTimeSegments }) => {
-  const workTimes = workTimeSegments
+  // const workTimeSegments = [
+  //   {"start": 156,"end": 256},
+  //   {"start": 356,"end": 456},
+  //   {"start": 556,"end": 656},
+  //   {"start": 762,"end": 0},
+  //   {"start": 1395,"end": 0}
+  // ]
 
   const totalMinutesInDay = 24 * 60;
 
   const currentTime = new Date();
   const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
   const currentTimePosition = (currentMinutes / totalMinutesInDay) * 100;
+
+  const workTimes = workTimeSegments.map(({ start, end }) => { // In case user close the app without 
+  // stopping the timer or user is working at the moment
+    if (end === 0) {
+      const endTime = Math.min(start + 25, currentMinutes);
+      return { start, end: endTime };
+    }
+    return { start, end };
+  });
 
   const totalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
   const totalWorkHours = Math.floor(totalWorkMinutes / 60);
