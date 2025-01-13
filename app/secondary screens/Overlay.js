@@ -1,5 +1,5 @@
 import React from 'react';
-import './overlayStyles.css'
+import './overlayStyles.css';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   const workTimes = [
@@ -10,6 +10,14 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   ];
 
   const totalMinutesInDay = 24 * 60;
+
+  const currentTime = new Date();
+  const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+  const currentTimePosition = (currentMinutes / totalMinutesInDay) * 100;
+
+  const totalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
+  const totalWorkHours = Math.floor(totalWorkMinutes / 60);
+  const remainingMinutes = totalWorkMinutes % 60;
 
   return (
     isOverlayVisible && (
@@ -30,16 +38,20 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
                   ></div>
                 );
               })}
-              {Array.from({ length: 24 }, (_, index) => (
-                <div key={index} className="timeline-hour-line"></div>
+              {Array.from({ length: 25 }, (_, index) => (
+                <div key={index} className="timeline-hour-line" style={{ left: `${(index / 24) * 100}%` }}></div>
               ))}
+              <div className="current-time-marker" style={{ left: `${currentTimePosition}%` }}></div>
             </div>
             <div className="timeline-hours">
-              {Array.from({ length: 24 }, (_, index) => (
+              {Array.from({ length: 25 }, (_, index) => (
                 <div key={index} className="timeline-hour">
                   {index}:00
                 </div>
               ))}
+            </div>
+            <div className="total-work-time">
+              Total Work Time Today: {totalWorkHours}h {remainingMinutes}m
             </div>
           </div>
         </div>
