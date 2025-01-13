@@ -71,16 +71,33 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const button = document.getElementById('startButton');
-
+  
     // Example: Toggle the `data-active` attribute on click
     if (button) {
       button.addEventListener('click', () => {
         button.setAttribute('data-active', (!isActive).toString());
       });
-    }  
-  },[isActive,type])
+    }
+  
+    // Cleanup function to remove the event listener
+    return () => {
+      if (button) {
+        button.removeEventListener('click', () => {
+          button.setAttribute('data-active', (!isActive).toString());
+        });
+      }
+    };
+  }, [isActive]);
+  
+  // Reset the button's UI when the timer is reset
+  useEffect(() => {
+    const button = document.getElementById('startButton');
+    if (button && !isActive) {
+      button.removeAttribute('data-active');
+    }
+  }, [isActive]);
 
   useEffect(() => { // Timer logic
     let interval;
