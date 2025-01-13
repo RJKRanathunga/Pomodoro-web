@@ -1,5 +1,3 @@
-// import redis from './Redis storage';
-
 function getMinutes_fromMidnight() {
   const now = new Date();
   const minutesFromMidnight = now.getHours() * 60 + now.getMinutes();

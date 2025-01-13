@@ -1,4 +1,4 @@
-import redis from '../../app/data/Redis storage';
+import redis from '../../app/utils/Redis storage';
 
 export default async function handler(req, res) {
 
