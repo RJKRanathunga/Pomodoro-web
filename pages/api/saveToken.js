@@ -1,7 +1,6 @@
-import redis_config from '../../app/data/Redis storage';
+import redis from '../../app/data/Redis storage';
 
 export default async function handler(req, res) {
-  const redis = redis_config;
 
   if (req.method === 'POST') {
     const { token } = req.body;

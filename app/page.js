@@ -5,7 +5,7 @@ import "./styles.css";
 import "./Advance styles/animations.css"
 import { sendMessageToApp,showNotification } from "./utils/output Methods";
 import { GrPowerReset } from "react-icons/gr";
-import { addStartTime,addEndTime } from "./data/store data";
+import { addStartTime,addEndTime,fetch_today_report_data } from "./data/store data";
 
 export default function Home() {
   // Variables
@@ -28,16 +28,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => { // Implement all necessary data to current session
-    const fetchData = async () => { // TODO:
-      const response = await fetch('/api/redisClient');
-        const result = await response.json();
-        consle.log(result);
-      if (result) {
-        setActiveTimeSegments(result);
-      }
-    };
-  
-    fetchData(); // Call the async function inside useEffect
+    fetch_today_report_data(setActiveTimeSegments); // Fetch data from Redis
 
     const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
