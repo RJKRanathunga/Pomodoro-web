@@ -9,7 +9,7 @@ async function fetch_today_report_data(setActiveTimeSegments) {
   const response = await fetch(`/api/redisClient?key=${key}`);
   const result = await response.json();
   if (result.value) {
-    setActiveTimeSegments([result.value]);
+    setActiveTimeSegments(result.value);
   }
 }
 
