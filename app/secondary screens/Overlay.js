@@ -1,32 +1,22 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 import './overlayStyles.css';
 import { fetchLast7DaysData } from '../data/store data';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
+  const [workTimeSegments_for7days, setWorkTimeSegments_for7days] = useState({});
+  useEffect(() => {
+    fetchLast7DaysData().then((data) => {
+      setWorkTimeSegments_for7days(data);
+    })},[]);
 
-  // workTimeSegments = [
-  //   {"start": 156,"end": 256},
-  //   {"start": 356,"end": 456},
-  //   {"start": 556,"end": 656},
-  //   {"start": 762,"end": 0},
-  //   {"start": 1395,"end": 0}
-  // ]
-
-  const workTimeSegments_for7days = fetchLast7DaysData();
   // const workTimeSegments_for7days = {
   //   dayReport_20250114: null,
   //   dayReport_20250113: [
   //   {"start": 156,"end": 256},
-  //   {"start": 356,"end": 456},
-  //   {"start": 556,"end": 656},
-  //   {"start": 762,"end": 0},
-  //   {"start": 1395,"end": 0}
+  //   {"start": 356,"end": 456}
   // ],
   //   dayReport_20250112: null,
-  //   dayReport_20250111: null,
-  //   dayReport_20250110: null,
-  //   dayReport_20250109: null,
-  //   dayReport_20250108: null
+  // ...
   // }
 
   const totalMinutesInDay = 24 * 60;
@@ -34,17 +24,6 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   const currentTime = new Date();
   const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
   const currentTimePosition = (currentMinutes / totalMinutesInDay) * 100;
-
-  // const workTimes = workTimeSegments.map(({ start, end }) => { // In case user close the app without 
-  // // stopping the timer or user is working at the moment
-  //   if (end === 0) {
-  //     const endTime = Math.min(start + 25, currentMinutes);
-  //     return { start, end: endTime };
-  //   }
-  //   return { start, end };
-  // });
-
-
 
   function getDate_byKey(key) {
     const datePart = key.split('_')[1];
