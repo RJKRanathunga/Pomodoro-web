@@ -18,7 +18,7 @@ export default function Home() {
   const [seconds, setSeconds] = useState(0);
 
   const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
-  const [activeTimeSegments, setActiveTimeSegments] = useState([]); // eslint-disable-line no-unused-vars
+  const [, setActiveTimeSegments] = useState([]); // activeTimeSegments is used to store the start and end time of each session. It is not used in the UI but is required for the data store
 
   const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
 
