@@ -251,7 +251,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Overlay isOverlayVisible={isOverlayVisible} toggleOverlay={toggleOverlay} workTimeSegments={activeTimeSegments}/>
+      <Overlay isOverlayVisible={isOverlayVisible} toggleOverlay={toggleOverlay} />
 
     </div>
   );
