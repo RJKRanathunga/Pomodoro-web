@@ -36,15 +36,13 @@ export async function sendMessageToApp(data: { [key: string]: string; }) {
       const result = await response.json();
 
       if (!result.success) {
-        alert(`Error: ${result.error}`);
         break;
       }
     }
-    alert('Message sent successfully to all tokens!');
 
   } catch (error) {
     console.error('Error:', error);
-    alert('Failed to send messages.');
+    console.error('Failed to send messages.');
   }
 }
 
