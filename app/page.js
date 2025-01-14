@@ -248,6 +248,7 @@ export default function Home() {
         <div className="statistics">
           <h2>Statistics</h2>
           <p>Cycles within batch: {cycleWithinBatch}</p>
+          <button className="button" onClick = {()=>console.log(activeTimeSegments)}>Show active time segments</button>
         </div>
       </div>
 
