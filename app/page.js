@@ -50,7 +50,7 @@ export default function Home() {
       const lastInteractionTime = endTime- parseInt(remainingTime);
       const currentTime = Date.now();
       duration = currentTime - lastInteractionTime;
-      if (duration >= 25*60*1000) {
+      if (duration >= 25*60*1000) { // TODO: this should update for also if the user has ended a pomodoro session but return after long break
         resetType("Pomodoro");
         localStorage.setItem("cycleWithinBatch", "0");
         setCycleWithinBatch(0);
@@ -178,17 +178,24 @@ export default function Home() {
     localStorage.setItem("type", newType);
     localStorage.removeItem("endTime");
     localStorage.removeItem("remainingTime"); // In case the user has paused the timer and came after 5 minutes
-    setType(newType);
+    setType((prevType) => {
+      if (prevType === "Pomodoro" && isActive) {
+        addEndTime(setActiveTimeSegments);
+        setIsActive(false); // Stop the timer
+      } else if (isActive){
+        setIsActive(false);
+      }
+      return newType;
+    });
     if (newType === "Pomodoro") {
       setMinutes(25);
-      addEndTime(setActiveTimeSegments);
+      // addEndTime(setActiveTimeSegments);
     } else if (newType === "Short break") {
       setMinutes(5);
     } else {
       setMinutes(15);
     }
     setSeconds(0);
-    setIsActive(false); // Stop the timer
   }
 
   const getBackgroundColor = () => {

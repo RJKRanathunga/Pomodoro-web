@@ -1,14 +1,33 @@
 import React from 'react';
 import './overlayStyles.css';
+import { fetchLast7DaysData } from '../data/store data';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay, workTimeSegments }) => {
-  // const workTimeSegments = [
+
+  // workTimeSegments = [
   //   {"start": 156,"end": 256},
   //   {"start": 356,"end": 456},
   //   {"start": 556,"end": 656},
   //   {"start": 762,"end": 0},
   //   {"start": 1395,"end": 0}
   // ]
+
+  const workTimeSegments_for7days = fetchLast7DaysData();
+  // workTimeSegments_for7days = {
+  //   dayReport_20250114: [
+  //   {"start": 156,"end": 256},
+  //   {"start": 356,"end": 456},
+  //   {"start": 556,"end": 656},
+  //   {"start": 762,"end": 0},
+  //   {"start": 1395,"end": 0}
+  // ],
+  //   dayReport_20250113: null,
+  //   dayReport_20250112: null,
+  //   dayReport_20250111: null,
+  //   dayReport_20250110: null,
+  //   dayReport_20250109: null,
+  //   dayReport_20250108: null
+  // }
 
   const totalMinutesInDay = 24 * 60;
 
@@ -28,6 +47,14 @@ const Overlay = ({ isOverlayVisible, toggleOverlay, workTimeSegments }) => {
   const totalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
   const totalWorkHours = Math.floor(totalWorkMinutes / 60);
   const remainingMinutes = totalWorkMinutes % 60;
+
+  function getDate_byKey(key) {
+  const datePart = key.split('_')[1];
+  const year = datePart.substring(0, 4);
+  const month = datePart.substring(4, 6);
+  const day = datePart.substring(6, 8);
+  return { year, month, day };
+}
 
   return (
     isOverlayVisible && (
