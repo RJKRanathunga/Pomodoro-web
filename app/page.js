@@ -18,7 +18,7 @@ export default function Home() {
   const [seconds, setSeconds] = useState(0);
 
   const [cycleWithinBatch, setCycleWithinBatch] = useState(0);
-  const [activeTimeSegments, setActiveTimeSegments] = useState([]);
+  const [activeTimeSegments, setActiveTimeSegments] = useState([]); // eslint-disable-line no-unused-vars
 
   const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
 
@@ -248,7 +248,6 @@ export default function Home() {
         <div className="statistics">
           <h2>Statistics</h2>
           <p>Cycles within batch: {cycleWithinBatch}</p>
-          <button className="button" onClick = {()=>console.log(activeTimeSegments)}>Show active time segments</button>
         </div>
       </div>
 
