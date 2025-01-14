@@ -15,6 +15,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Key and value are required' });
       }
       await redis.set(key, value);
+
+      // Set expiration for keys starting with 'dayReport_'
+      if (key.startsWith('dayReport_')) {
+        const ttl = await redis.ttl(key);
+        if (ttl === -1) { // If the key does not have an expiration time set
+          await redis.expire(key, 8 * 24 * 60 * 60); // Set expiration time to 8 days
+        }
+      }
+
       return res.status(200).json({ message: 'Data stored successfully' });
     } else {
       res.setHeader('Allow', ['GET', 'POST']);
