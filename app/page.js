@@ -134,17 +134,20 @@ export default function Home() {
     setEndTime(newEndTime);
     localStorage.setItem("endTime", new Date(newEndTime).toISOString());
     localStorage.removeItem("remainingTime");
-    addStartTime(setActiveTimeSegments);
+    if (type === "Pomodoro"){
+      addStartTime(setActiveTimeSegments);
+    }
   };
   const pauseTimer = () => {
     localStorage.setItem("remainingTime", (minutes * 60000 + seconds * 1000).toString());
     setIsActive(false);
-    addEndTime(setActiveTimeSegments);
+    if (type === "Pomodoro"){
+      addEndTime(setActiveTimeSegments);
+    }
   };
   const resetTimer = () => {
     resetType(type);
     localStorage.removeItem("remainingTime"); // remainingTime will only available the last interaction was a pause
-    addEndTime(setActiveTimeSegments);
   };
 
   const formatTime = (time) => (time < 10 ? `0${time}` : time); // Format time for display
@@ -189,7 +192,6 @@ export default function Home() {
     });
     if (newType === "Pomodoro") {
       setMinutes(25);
-      // addEndTime(setActiveTimeSegments);
     } else if (newType === "Short break") {
       setMinutes(5);
     } else {
