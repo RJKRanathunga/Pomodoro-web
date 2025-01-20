@@ -36,7 +36,7 @@ export async function sendMessageToApp(data: { [key: string]: string; }) {
       const result = await response.json();
 
       if (!result.success) {
-        break;
+        console.error('Failed to send messages:', result);
       }
     }
 
