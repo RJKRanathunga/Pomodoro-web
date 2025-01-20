@@ -21,6 +21,7 @@ export default function Home() {
   const [, setActiveTimeSegments] = useState([]); // activeTimeSegments is used to store the start and end time of each session. It is not used in the UI but is required for the data store
 
   const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
+  const [isLoading, setIsLoading] = useState(true); // State for loading spinner
 
   // UseEffects
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => { // Implement all necessary data to current session
-    fetch_today_report_data(setActiveTimeSegments); // Fetch data from Redis
+    fetch_today_report_data(setActiveTimeSegments).then(()=>setIsLoading(false)); // Fetch data from Redis
 
     const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
@@ -216,6 +217,13 @@ export default function Home() {
 
   return (
     <div className="container" style={{backgroundColor: getBackgroundColor()}}>
+      {isLoading ? (
+        <div className="loading-screen">
+          <div className="spinner"></div>
+          <p>Loading...</p>
+        </div>
+      ) :(
+      <>
       <div className="options">
         <button className="options-button" onClick={toggleOverlay}>Report</button>
         <button className="options-button">Settings</button>
@@ -252,7 +260,8 @@ export default function Home() {
           <p>Cycles within batch: {cycleWithinBatch}</p>
         </div>
       </div>
-
+      </>)
+}
       <Overlay isOverlayVisible={isOverlayVisible} toggleOverlay={toggleOverlay} />
 
     </div>
