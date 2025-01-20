@@ -8,15 +8,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: auto; /* Allow scrolling */
 }
 
 .overlay-content {
-  background: white;
+  background-color: #fff;
   padding: 20px;
   border-radius: 10px;
+  max-height: 90%; /* Limit the height to allow scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
   width: 80%;
-  max-width: 95%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .close-button {
