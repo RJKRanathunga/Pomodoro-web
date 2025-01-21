@@ -6,7 +6,8 @@ import "./Advance styles/animations.css"
 import { sendMessageToApp,showNotification } from "./utils/output Methods";
 import { GrPowerReset } from "react-icons/gr";
 import { addStartTime,addEndTime,fetch_today_report_data } from "./data/store data";
-import Overlay from "./secondary screens/Overlay";
+import Overlay from "./secondary screens/Report/Overlay";
+import SettingsOverlay from "./secondary screens/Settings/SettingsOverlay"
 
 export default function Home() {
   // Variables
@@ -21,7 +22,16 @@ export default function Home() {
   const [, setActiveTimeSegments] = useState([]); // activeTimeSegments is used to store the start and end time of each session. It is not used in the UI but is required for the data store
 
   const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
+  const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // State for loading spinner
+
+  const [settings, setSettings] = useState({
+    pomodoroTime: localStorage.getItem('pomodoroTime') || 25,
+    shortBreakTime: localStorage.getItem('shortBreakTime') || 5,
+    longBreakTime: localStorage.getItem('longBreakTime') || 15,
+    autoStartBreaks: localStorage.getItem('autoStartBreaks') === 'true',
+    autoStartPomodoros: localStorage.getItem('autoStartPomodoros') === 'true',
+  });
 
   // UseEffects
   useEffect(() => {
@@ -163,6 +173,7 @@ export default function Home() {
           sendMessageToApp({ type: "Long break" });
           localStorage.setItem("cycleWithinBatch", "0");
           setCycleWithinBatch(0);
+          setIsActive(settings.autoStartBreaks);
           return 0;
         }
         resetType("Short break");
@@ -170,11 +181,13 @@ export default function Home() {
         sendMessageToApp({ type: "Short break" });
         localStorage.setItem("cycleWithinBatch", newCycle.toString());
         setCycleWithinBatch(newCycle);
+        setIsActive(settings.autoStartBreaks);
         return newCycle;
       });
     } else {
       resetType("Pomodoro");
       showNotification("Time to work!");
+      setIsActive(settings.autoStartPomodoros);
     }
   }
 
@@ -192,11 +205,11 @@ export default function Home() {
       return newType;
     });
     if (newType === "Pomodoro") {
-      setMinutes(25);
+      setMinutes(settings.pomodoroTime);
     } else if (newType === "Short break") {
-      setMinutes(5);
+      setMinutes(settings.shortBreakTime);
     } else {
-      setMinutes(15);
+      setMinutes(settings.longBreakTime);
     }
     setSeconds(0);
   }
@@ -213,11 +226,15 @@ export default function Home() {
 
   const toggleOverlay = () => {
     setIsOverlayVisible(!isOverlayVisible);
+  }
+
+  const toggleSettingsOverlay = () => {
+    setIsSettingsOverlayVisible(!isSettingsOverlayVisible);
   };
 
   return (
     <div className="container" style={{backgroundColor: getBackgroundColor()}}>
-      {isLoading ? (
+      {false ? ( // TODO: edit this to isLoading
         <div className="loading-screen">
           <div className="spinner"></div>
           <p>Loading...</p>
@@ -226,7 +243,7 @@ export default function Home() {
       <>
       <div className="options">
         <button className="options-button" onClick={toggleOverlay}>Report</button>
-        <button className="options-button">Settings</button>
+        <button className="options-button" onClick={toggleSettingsOverlay}>Settings</button>
       </div>
       <div className="main-container">
         <div className="header">
@@ -263,7 +280,8 @@ export default function Home() {
       </>)
 }
       <Overlay isOverlayVisible={isOverlayVisible} toggleOverlay={toggleOverlay} />
-
+      <SettingsOverlay isVisible={isSettingsOverlayVisible} toggleOverlay={toggleSettingsOverlay}
+      settings={settings} setSettings={setSettings}/>
     </div>
   );
 }

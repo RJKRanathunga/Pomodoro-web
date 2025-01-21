@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react';
 import './overlayStyles.css';
-import { fetchLast7DaysData } from '../data/store data';
+import { fetchLast7DaysData } from '../../data/store data';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   const [workTimeSegments_for7days, setWorkTimeSegments_for7days] = useState({});
