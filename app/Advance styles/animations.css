@@ -28,7 +28,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    transform: scale(0);
+    transform: scale(0.01);
     transition: transform 0.3s ease-in;
     mix-blend-mode: difference;
     background: radial-gradient(circle at center, #fff 24%, #000 25%, #000 100%);
