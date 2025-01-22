@@ -1,6 +1,6 @@
 "use client"; // Ensure this file is treated as a client component
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./styles.css";
 import "./Advance styles/animations.css"
 import { sendMessageToApp, showNotification } from "./utils/output Methods";
@@ -107,6 +107,45 @@ export default function Home() {
       button.setAttribute('data-active', isActive.toString());
     }
   }, [isActive]);
+
+  // Update the timer when the settings are changed
+  const prevSettingsRef = useRef(settings);
+  useEffect(() => {
+    const prevSettings = prevSettingsRef.current;
+    if (prevSettings !== settings) {
+      if (type === "Pomodoro" && prevSettings.pomodoroTime !== settings.pomodoroTime) {
+        updateTimerWithNewSettings(settings.pomodoroTime, prevSettings.pomodoroTime);
+      } else if (type === "Short break" && prevSettings.shortBreakTime !== settings.shortBreakTime) {
+        updateTimerWithNewSettings(settings.shortBreakTime, prevSettings.shortBreakTime);
+      } else if (type === "Long break" && prevSettings.longBreakTime !== settings.longBreakTime) {
+        updateTimerWithNewSettings(settings.longBreakTime, prevSettings.longBreakTime);
+      }
+    }
+    prevSettingsRef.current = settings;
+  }, [settings]);
+
+  const updateTimerWithNewSettings = (newTime, oldTime) => {
+    const currentTime = Date.now();
+    let remainingTime = localStorage.getItem("remainingTime");
+    if (remainingTime) {
+      remainingTime = parseInt(remainingTime);
+    } else {
+      remainingTime = Math.max(0, endTime - currentTime); // Calculate remaining time
+    }
+    const remainingMinutes = Math.floor(remainingTime / 60000); // Convert to minutes
+    const remainingSeconds = Math.floor((remainingTime % 60000) / 1000); // Convert to seconds
+
+    const newMinutes = newTime - (oldTime - remainingMinutes);
+
+    setMinutes(newMinutes);
+    setSeconds(remainingSeconds);
+
+    const newEndTime = currentTime + newMinutes * 60000 + remainingSeconds * 1000;
+    setEndTime(newEndTime);
+    localStorage.setItem("endTime", new Date(newEndTime).toISOString());
+    localStorage.setItem("remainingTime", (newMinutes * 60000 + remainingSeconds * 1000).toString());
+  };
+  // Update the timer when the settings are changed - end
 
   useEffect(() => { // Timer logic
     let interval;
