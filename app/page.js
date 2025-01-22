@@ -46,6 +46,9 @@ export default function Home() {
 
     const prevType = localStorage.getItem("type"); // Set type for current session
     setType(prevType || "Pomodoro");
+    
+    const minutes_value = prevType === "Pomodoro" ? settings.pomodoroTime : prevType === "Short break" ? settings.shortBreakTime : settings.longBreakTime;
+    setMinutes(minutes_value);
 
     const storedEndTime = localStorage.getItem("endTime");
     setEndTime(storedEndTime ? new Date(storedEndTime).getTime() : 0);
@@ -173,7 +176,6 @@ export default function Home() {
           sendMessageToApp({ type: "Long break" });
           localStorage.setItem("cycleWithinBatch", "0");
           setCycleWithinBatch(0);
-          setIsActive(settings.autoStartBreaks);
           return 0;
         }
         resetType("Short break");
@@ -181,13 +183,11 @@ export default function Home() {
         sendMessageToApp({ type: "Short break" });
         localStorage.setItem("cycleWithinBatch", newCycle.toString());
         setCycleWithinBatch(newCycle);
-        setIsActive(settings.autoStartBreaks);
         return newCycle;
       });
     } else {
       resetType("Pomodoro");
       showNotification("Time to work!");
-      setIsActive(settings.autoStartPomodoros);
     }
   }
 
