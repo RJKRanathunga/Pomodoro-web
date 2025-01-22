@@ -25,13 +25,26 @@ export default function Home() {
   const [isSettingsOverlayVisible, setIsSettingsOverlayVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // State for loading spinner
 
-  const [settings, setSettings] = useState({
-    pomodoroTime: localStorage.getItem('pomodoroTime') || 25,
-    shortBreakTime: localStorage.getItem('shortBreakTime') || 5,
-    longBreakTime: localStorage.getItem('longBreakTime') || 15,
-    autoStartBreaks: localStorage.getItem('autoStartBreaks') === 'true',
-    autoStartPomodoros: localStorage.getItem('autoStartPomodoros') === 'true',
-  });
+  const getInitialSettings = () => {
+    if (typeof window !== 'undefined') {
+      return {
+        pomodoroTime: localStorage.getItem('pomodoroTime') || 25,
+        shortBreakTime: localStorage.getItem('shortBreakTime') || 5,
+        longBreakTime: localStorage.getItem('longBreakTime') || 15,
+        autoStartBreaks: localStorage.getItem('autoStartBreaks') === 'true',
+        autoStartPomodoros: localStorage.getItem('autoStartPomodoros') === 'true',
+      };
+    }
+    return {
+      pomodoroTime: 25,
+      shortBreakTime: 5,
+      longBreakTime: 15,
+      autoStartBreaks: false,
+      autoStartPomodoros: false,
+    };
+  };
+  
+  const [settings, setSettings] = useState(getInitialSettings());
 
   // UseEffects
   useEffect(() => {
