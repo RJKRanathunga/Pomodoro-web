@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect} from 'react';
 import './settingsStyles.css';
+import { GrClose } from 'react-icons/gr';
 
 const SettingsOverlay = ({ isVisible, toggleOverlay,settings, setSettings }) => {
+  const overlayRef = useRef(null);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
@@ -32,12 +35,35 @@ const SettingsOverlay = ({ isVisible, toggleOverlay,settings, setSettings }) => 
     }
   };
 
+  // Outside click handler
+  const handleClickOutside = (event) => {
+    if (overlayRef.current && !overlayRef.current.contains(event.target)) {
+      toggleOverlay();
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isVisible]);
+  // Outside click handler - end
+
   return (
     isVisible && (
       <div className="settings-overlay">
-        <div className="settings-overlay-content">
-          <h2>Settings</h2>
-          <button className="settings-close-button" onClick={toggleOverlay}>Close</button>
+        <div className="settings-overlay-content" ref={overlayRef}>
+          <div className="settings-header">
+            <h2>Settings</h2>
+            <GrClose className="settings-close-icon" onClick={toggleOverlay} />
+          </div>
+          <hr className="settings-divider" />
           <div className="settings-form">
             <label>
               Pomodoro Time (minutes):

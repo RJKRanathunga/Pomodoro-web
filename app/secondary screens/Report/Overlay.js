@@ -1,8 +1,31 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 import './overlayStyles.css';
 import { fetchLast7DaysData } from '../../data/store data';
+import { GrClose } from 'react-icons/gr';
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
+  // Outside click handler
+  const overlayRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (overlayRef.current && !overlayRef.current.contains(event.target)) {
+      toggleOverlay();
+    }
+  };
+
+  useEffect(() => {
+    if (isOverlayVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOverlayVisible]);
+  // Outside click handler - end
+  
   const [workTimeSegments_for7days, setWorkTimeSegments_for7days] = useState({});
   useEffect(() => {
     fetchLast7DaysData().then((data) => {
@@ -36,9 +59,12 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   return (
     isOverlayVisible && (
       <div className="overlay">
-        <div className="overlay-content">
+        <div className="overlay-content" ref={overlayRef}>
+        <div className="report-header">
           <h2>Report</h2>
-          <button className="close-button" onClick={toggleOverlay}>Close</button>
+          <GrClose className="report-close-icon" onClick={toggleOverlay} />
+        </div>
+        <hr className="report-divider" />
           <div className="timeline-container">
             {Object.keys(workTimeSegments_for7days).map((key) => {
 

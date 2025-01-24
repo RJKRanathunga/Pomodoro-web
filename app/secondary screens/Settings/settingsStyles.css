@@ -22,18 +22,24 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.settings-close-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 0;
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.settings-close-icon {
   cursor: pointer;
-  border-radius: 5px;
+  color:black;
+  font-size: 24px;
+}
+
+.settings-divider {
+  border: 0;
+  height: 3px;
+  background: #ccc;
+  margin: 10px 0;
 }
 
 .settings-form {
