@@ -90,12 +90,18 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   const summery_FullWorkHours = Math.floor(summery_totalWorkMinutes / 60);
   const summery_remainingMinutes = summery_totalWorkMinutes % 60;
 
+  const formatTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
   const data = {
-    labels: Object.keys(dailyWorkMinutes).map(key => getDate_byKey(key)),
+    labels: Object.keys(dailyWorkMinutes).map(key => new Date(key.split('_')[1]).toLocaleDateString()),
     datasets: [
       {
-        label: 'Total Work Time (minutes)',
-        data: Object.values(dailyWorkMinutes),
+        label: 'Total Work Time (Hours: Minutes)',
+        data: Object.values(dailyWorkMinutes).map(minutes => formatTime(minutes)),
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         fill: true,
@@ -113,6 +119,14 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
         display: true,
         text: 'Total Work Time for Each Day',
       },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const minutes = context.raw;
+            return formatTime(minutes);
+          },
+        },
+      },
     },
     scales: {
       x: {
@@ -126,11 +140,16 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
           display: true,
           text: 'Total Work Time (minutes)',
         },
+        ticks: {
+          callback: function (value) {
+            return formatTime(value);
+          },
+        },
         beginAtZero: true,
       },
     },
   };
-
+  
   return (
     isOverlayVisible && (
       <div className="overlay">
