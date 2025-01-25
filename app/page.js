@@ -286,7 +286,7 @@ export default function Home() {
 
   return (
     <div className="container" style={{ backgroundColor: getBackgroundColor() }}>
-      {isLoading ? (
+      {false ? (
         <div className="loading-screen">
           <div className="spinner"></div>
           <p>Loading...</p>

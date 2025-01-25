@@ -61,6 +61,35 @@
   margin: 10px 0;
 }
 
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.summary-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-left: 50px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #86c1ef;
+  color: black;
+}
+
+.summary-time {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.summary-text {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
 .timeline-container {
   margin-top: 20px;
 }

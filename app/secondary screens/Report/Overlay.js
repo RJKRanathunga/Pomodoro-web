@@ -11,13 +11,27 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   // Outside click handler
   const overlayRef = useRef(null);
+  
+  // Tabs
   const [activeTab, setActiveTab] = useState('report');
+
+  useEffect(() => {
+    const lastActiveTab = localStorage.getItem('lastActiveTab');
+    if (lastActiveTab) {
+      setActiveTab(lastActiveTab);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('lastActiveTab', activeTab);
+  }, [activeTab]);
 
   const handleClickOutside = (event) => {
     if (overlayRef.current && !overlayRef.current.contains(event.target)) {
       toggleOverlay();
     }
   };
+  // Tabs --
 
   useEffect(() => {
     if (isOverlayVisible) {
@@ -237,8 +251,13 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
         )}
         {activeTab === 'summary' && (
             <div className="summary-container">
-              <div>
-                <h3>Total work in last week: {summery_FullWorkHours}h {summery_remainingMinutes}m</h3>
+              <div className="summary-box">
+                <div className="summary-time">
+                  <h1>{summery_FullWorkHours || "00"} : {summery_remainingMinutes || "00"}</h1>
+                </div>
+                <div className="summary-text">
+                  <h4>Total work in last week</h4>
+                </div>
               </div>
               <Line data={chartData} options={options} />
             </div>
