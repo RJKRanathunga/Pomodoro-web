@@ -62,9 +62,9 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
     return `${year}-${month}-${day}`;
   }
 
-  const [dailyWorkMinutes, setDailyWorkMinutes] = useState({});
   const [summery_FullWorkHours, setSummery_FullWorkHours] = useState(0);
   const [summery_remainingMinutes, setSummery_remainingMinutes] = useState(0);
+  const [chartData, setChartData] = useState({});
   
   const calculateTotalWorkTime = () => {
     let totalWorkMinutes = 0;
@@ -89,32 +89,34 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   
     return { totalWorkMinutes, dailyWorkMinutes };
   };
-  
-  useEffect(() => {
-    const { totalWorkMinutes, dailyWorkMinutes } = calculateTotalWorkTime();
-    setDailyWorkMinutes(dailyWorkMinutes);
-    setSummery_FullWorkHours(Math.floor(totalWorkMinutes / 60));
-    setSummery_remainingMinutes(totalWorkMinutes % 60);
-  }, [workTimeSegments_for7days]);
-  
+
   const formatTime = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
   };
   
-  const data = {
-    labels: Object.keys(dailyWorkMinutes).map(key => new Date(key.split('_')[1]).toLocaleDateString()),
-    datasets: [
-      {
-        label: 'Total Work Time (Hours: Minutes)',
-        data: Object.values(dailyWorkMinutes).map(minutes => formatTime(minutes)),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-      },
-    ],
-  };
+  useEffect(() => {
+    const { totalWorkMinutes, dailyWorkMinutes } = calculateTotalWorkTime();
+    console.log('dailyWorkMinutes:', dailyWorkMinutes);
+    console.log('totalWorkMinutes:', totalWorkMinutes);
+    setSummery_FullWorkHours(Math.floor(totalWorkMinutes / 60));
+    setSummery_remainingMinutes(totalWorkMinutes % 60);
+
+    const data = {
+      labels: Object.keys(dailyWorkMinutes).map(key => new Date(key.split('_')[1]).toLocaleDateString()),
+      datasets: [
+        {
+          label: 'Total Work Time (Hours: Minutes)',
+          data: Object.values(dailyWorkMinutes).map(minutes => formatTime(minutes)),
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: true,
+        },
+      ],
+    };
+    setChartData(data);
+  }, [workTimeSegments_for7days]);
 
   const options = {
     responsive: true,
@@ -232,7 +234,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
               <div>
                 <h3>Total work in last week: {summery_FullWorkHours}h {summery_remainingMinutes}m</h3>
               </div>
-              <Line data={data} options={options} />
+              <Line data={chartData} options={options} />
             </div>
           )}
         </div>
