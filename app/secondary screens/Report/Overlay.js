@@ -114,7 +114,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
       datasets: [
         {
           label: 'Total Work Time (Hours: Minutes)',
-          data: Object.values(dailyWorkMinutes).map(minutes => formatTime(minutes)),
+          data: Object.values(dailyWorkMinutes),
           borderColor: 'rgba(75, 192, 192, 1)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           fill: true,
