@@ -6,6 +6,7 @@ import { GrClose } from 'react-icons/gr';
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   // Outside click handler
   const overlayRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('report');
 
   const handleClickOutside = (event) => {
     if (overlayRef.current && !overlayRef.current.contains(event.target)) {
@@ -56,15 +57,43 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
     return `${year}-${month}-${day}`;
   }
 
+  const calculateTotalWorkTime = () => {
+    let totalWorkMinutes = 0;
+
+    Object.keys(workTimeSegments_for7days).forEach((key) => {
+      const reportDay = key.split('_')[1];
+      const todayDay = currentTime.toISOString().split('T')[0].split('-').join('');
+      const workTimeSegments = workTimeSegments_for7days[key];
+      const workTimes = workTimeSegments ? workTimeSegments.map(({ start, end }) => {
+        if (end === 0) {
+          const endTime = reportDay === todayDay ? (currentMinutes < start + 25 ? currentMinutes : start) : start;
+          return { start, end: endTime };
+        }
+        return { start, end };
+      }) : [];
+
+      const dayTotalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
+      totalWorkMinutes += dayTotalWorkMinutes;
+    });
+
+    return totalWorkMinutes;
+  };
+
+  const summery_totalWorkMinutes = calculateTotalWorkTime();
+  const summery_FullWorkHours = Math.floor(summery_totalWorkMinutes / 60);
+  const summery_remainingMinutes = summery_totalWorkMinutes % 60;
+
   return (
     isOverlayVisible && (
       <div className="overlay">
         <div className="overlay-content" ref={overlayRef}>
-        <div className="report-header">
-          <h2>Report</h2>
+        <div className="tabs">
+            <button className={`tab-button ${activeTab === 'report' ? 'active' : ''}`} onClick={() => setActiveTab('report')}>Report</button>
+            <button className={`tab-button ${activeTab === 'summary' ? 'active' : ''}`} onClick={() => setActiveTab('summary')}>Summary</button>
           <GrClose className="report-close-icon" onClick={toggleOverlay} />
         </div>
         <hr className="report-divider" />
+        {activeTab === 'report' && (
           <div className="timeline-container">
             {Object.keys(workTimeSegments_for7days).map((key) => {
 
@@ -123,6 +152,14 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
               );
             })}
           </div>
+        )}
+        {activeTab === 'summary' && (
+            <div className="summary-container">
+              <div>
+                <h3>Total work in last week: {summery_FullWorkHours}h {summery_remainingMinutes}m</h3>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )

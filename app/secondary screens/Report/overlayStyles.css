@@ -20,6 +20,27 @@
   width: 80%;
 }
 
+.tabs {
+  display: flex;
+  padding-left: 60px;
+  padding-right: 20px;
+  justify-content:space-between;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tab-button.active {
+  border-bottom: 2px solid #000;
+}
+
 .report-header {
   display: flex;
   justify-content: space-between;
@@ -82,6 +103,11 @@
   width: 2px;
   background: red;
   top: 0;
+}
+
+.h3{
+  color:black;
+  font-size: 10px;
 }
 
 .timeline-hours {
@@ -206,9 +232,4 @@
   text-align: center;
   color: black;
   padding: 50px 0 20px 0;
-}
-
-.h3{
-  color:black;
-  font-size: 10px;
 }
