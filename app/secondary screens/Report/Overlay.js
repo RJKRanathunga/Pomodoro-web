@@ -73,7 +73,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
               const workTimeSegments = workTimeSegments_for7days[key];
               const workTimes = workTimeSegments ? workTimeSegments.map(({ start, end }) => {
                 if (end === 0) {
-                  const endTime =reportDay===todayDay ? Math.min(start + 25, currentMinutes) : Math.min(start+25, totalMinutesInDay);
+                  const endTime =reportDay===todayDay ? ( currentMinutes < start + 25 ? currentMinutes:start )  : start;
                   return { start, end: endTime };
                 }
                 return { start, end };
