@@ -62,10 +62,14 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
     return `${year}-${month}-${day}`;
   }
 
+  const [dailyWorkMinutes, setDailyWorkMinutes] = useState({});
+  const [summery_FullWorkHours, setSummery_FullWorkHours] = useState(0);
+  const [summery_remainingMinutes, setSummery_remainingMinutes] = useState(0);
+  
   const calculateTotalWorkTime = () => {
     let totalWorkMinutes = 0;
     const dailyWorkMinutes = {};
-
+  
     Object.keys(workTimeSegments_for7days).forEach((key) => {
       const reportDay = key.split('_')[1];
       const todayDay = currentTime.toISOString().split('T')[0].split('-').join('');
@@ -77,25 +81,28 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
         }
         return { start, end };
       }) : [];
-
+  
       const dayTotalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
       totalWorkMinutes += dayTotalWorkMinutes;
       dailyWorkMinutes[key] = dayTotalWorkMinutes;
     });
-
+  
     return { totalWorkMinutes, dailyWorkMinutes };
   };
-
-  const {summery_totalWorkMinutes, dailyWorkMinutes} = calculateTotalWorkTime();
-  const summery_FullWorkHours = Math.floor(summery_totalWorkMinutes / 60);
-  const summery_remainingMinutes = summery_totalWorkMinutes % 60;
-
+  
+  useEffect(() => {
+    const { totalWorkMinutes, dailyWorkMinutes } = calculateTotalWorkTime();
+    setDailyWorkMinutes(dailyWorkMinutes);
+    setSummery_FullWorkHours(Math.floor(totalWorkMinutes / 60));
+    setSummery_remainingMinutes(totalWorkMinutes % 60);
+  }, [workTimeSegments_for7days]);
+  
   const formatTime = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
   };
-
+  
   const data = {
     labels: Object.keys(dailyWorkMinutes).map(key => new Date(key.split('_')[1]).toLocaleDateString()),
     datasets: [
