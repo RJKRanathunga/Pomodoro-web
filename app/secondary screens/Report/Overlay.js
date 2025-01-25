@@ -104,7 +104,13 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
     setSummery_remainingMinutes(totalWorkMinutes % 60);
 
     const data = {
-      labels: Object.keys(dailyWorkMinutes).map(key => new Date(key.split('_')[1]).toLocaleDateString()),
+      labels: Object.keys(dailyWorkMinutes).map(key => {
+        const dateString = key.split('_')[1];
+        const year = dateString.substring(0, 4);
+        const month = dateString.substring(4, 6) - 1; // Months are 0-based in JavaScript Date
+        const day = dateString.substring(6, 8);
+        return new Date(year, month, day).toLocaleDateString();
+    }),
       datasets: [
         {
           label: 'Total Work Time (Hours: Minutes)',
