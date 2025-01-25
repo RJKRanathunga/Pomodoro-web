@@ -3,9 +3,9 @@ import './overlayStyles.css';
 import { fetchLast7DaysData } from '../../data/store data';
 import { GrClose } from 'react-icons/gr';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import {Filler, Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
