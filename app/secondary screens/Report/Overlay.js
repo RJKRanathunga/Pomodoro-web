@@ -2,6 +2,11 @@ import React,{useState, useEffect, useRef} from 'react';
 import './overlayStyles.css';
 import { fetchLast7DaysData } from '../../data/store data';
 import { GrClose } from 'react-icons/gr';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   // Outside click handler
@@ -59,6 +64,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
 
   const calculateTotalWorkTime = () => {
     let totalWorkMinutes = 0;
+    const dailyWorkMinutes = {};
 
     Object.keys(workTimeSegments_for7days).forEach((key) => {
       const reportDay = key.split('_')[1];
@@ -74,14 +80,56 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
 
       const dayTotalWorkMinutes = workTimes.reduce((sum, { start, end }) => sum + (end - start), 0);
       totalWorkMinutes += dayTotalWorkMinutes;
+      dailyWorkMinutes[key] = dayTotalWorkMinutes;
     });
 
-    return totalWorkMinutes;
+    return { totalWorkMinutes, dailyWorkMinutes };
   };
 
-  const summery_totalWorkMinutes = calculateTotalWorkTime();
+  const {summery_totalWorkMinutes, dailyWorkMinutes} = calculateTotalWorkTime();
   const summery_FullWorkHours = Math.floor(summery_totalWorkMinutes / 60);
   const summery_remainingMinutes = summery_totalWorkMinutes % 60;
+
+  const data = {
+    labels: Object.keys(dailyWorkMinutes).map(key => getDate_byKey(key)),
+    datasets: [
+      {
+        label: 'Total Work Time (minutes)',
+        data: Object.values(dailyWorkMinutes),
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Total Work Time for Each Day',
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Days',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Total Work Time (minutes)',
+        },
+        beginAtZero: true,
+      },
+    },
+  };
 
   return (
     isOverlayVisible && (
@@ -158,6 +206,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
               <div>
                 <h3>Total work in last week: {summery_FullWorkHours}h {summery_remainingMinutes}m</h3>
               </div>
+              <Line data={data} options={options} />
             </div>
           )}
         </div>
