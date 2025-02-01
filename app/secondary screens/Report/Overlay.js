@@ -249,7 +249,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
                         ))}
                       </div>
                       <div className="total-work-time">
-                        Total Work Time Today: {totalWorkHours}h {remainingMinutes}m
+                        Total work time of the day: {totalWorkHours}h {remainingMinutes}m
                       </div>
                     </div>
                     ):(
