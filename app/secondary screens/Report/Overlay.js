@@ -37,10 +37,15 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   
   const handleMouseEnter = (event, startTime, endTime) => {
     const rect = event.target.getBoundingClientRect();
+    const formatTime = (minutes) => {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    };
     setTooltip({
       visible: true,
-      startTime,
-      endTime,
+      startTime: formatTime(startTime),
+      endTime: formatTime(endTime),
       position: { x: rect.left + window.scrollX, y: rect.top + window.scrollY - 30 },
     });
   };

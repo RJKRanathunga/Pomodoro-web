@@ -99,6 +99,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   z-index: 1000;
+  color: black;
 }
 
 .timeline-container {
@@ -123,6 +124,10 @@
 
 .timeline-segment.work {
   background: #4caf50;
+}
+
+.timeline-segment.work:hover {
+  color: #1a781d;
 }
 
 .timeline-segment.break {
