@@ -138,7 +138,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
           label: 'Total Work Time (Hours: Minutes)',
           data: sortedKeys.map(key => dailyWorkMinutes[key]),
           borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          backgroundColor: 'rgba(18, 148, 148, 1)',
           fill: true,
         },
       ],
