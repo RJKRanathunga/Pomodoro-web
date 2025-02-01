@@ -50,7 +50,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   useEffect(() => {
     fetchLast7DaysData().then((data) => {
       setWorkTimeSegments_for7days(data);
-    })},[]);
+    })},[isOverlayVisible]);
 
   // const workTimeSegments_for7days = {
   //   dayReport_20250114: null,
