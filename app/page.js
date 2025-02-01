@@ -96,9 +96,13 @@ export default function Home() {
         setMinutes(Math.floor(remainingTime / 60000));
         setSeconds(Math.floor((remainingTime % 60000) / 1000));
         setIsActive(true);
+      } else if (Date.now()-endTime > 15*60*1000) { // User logged in after 15 minutes
+        resetType("Pomodoro");
+        setCycleWithinBatch(0);
+        localStorage.setItem("cycleWithinBatch", "0");
       } else if (prevType !== "Pomodoro") { // Timer has ended
         resetType("Pomodoro");
-      }
+      } 
     }
   }, []);
 
