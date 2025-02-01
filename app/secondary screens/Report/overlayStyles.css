@@ -127,7 +127,7 @@
 }
 
 .timeline-segment.work:hover {
-  color: #1a781d;
+  background-color: #1a781d;
 }
 
 .timeline-segment.break {
