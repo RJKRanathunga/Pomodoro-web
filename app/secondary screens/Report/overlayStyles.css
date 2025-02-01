@@ -90,6 +90,17 @@
   margin-top: 5px;
 }
 
+.detail-tooltip {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 1000;
+}
+
 .timeline-container {
   margin-top: 20px;
 }

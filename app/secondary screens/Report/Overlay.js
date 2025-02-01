@@ -32,6 +32,24 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   };
   // Tabs --
 
+  // Tooltip
+  const [tooltip, setTooltip] = useState({ visible: false, startTime: '', endTime: '', position: { x: 0, y: 0 } });
+  
+  const handleMouseEnter = (event, startTime, endTime) => {
+    const rect = event.target.getBoundingClientRect();
+    setTooltip({
+      visible: true,
+      startTime,
+      endTime,
+      position: { x: rect.left + window.scrollX, y: rect.top + window.scrollY - 30 },
+    });
+  };
+  
+  const handleMouseLeave = () => {
+    setTooltip({ visible: false, startTime: '', endTime: '', position: { x: 0, y: 0 } });
+  };
+  // Tooltip --
+
   useEffect(() => {
     if (isOverlayVisible) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -230,10 +248,15 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
                           const isWorkTime = workTimes.some(
                             (workTime) => index >= workTime.start && index <= workTime.end
                           );
+                          const workTime = workTimes.find(
+                            (workTime) => index >= workTime.start && index <= workTime.end
+                          );
                           return (
                             <div
                               key={index}
                               className={`timeline-segment ${isWorkTime ? 'work' : 'break'}`}
+                              onMouseEnter={(e) => isWorkTime && handleMouseEnter(e, workTime.start, workTime.end)}
+                              onMouseLeave={handleMouseLeave}
                             ></div>
                           );
                         })}
@@ -274,6 +297,12 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
                 <Bar data={chartData} options={options} />
               </div>
             )}
+            </div>
+          )}
+          {tooltip.visible && (
+            <div className="detail-tooltip" style={{ top: tooltip.position.y, left: tooltip.position.x }}>
+              <div>Start: {tooltip.startTime}</div>
+              <div>End: {tooltip.endTime}</div>
             </div>
           )}
         </div>
