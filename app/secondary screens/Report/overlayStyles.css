@@ -126,10 +126,6 @@
   background: #4caf50;
 }
 
-.timeline-segment.work:hover {
-  background-color: #1a781d;
-}
-
 .timeline-segment.break {
   background: #ccc;
 }
