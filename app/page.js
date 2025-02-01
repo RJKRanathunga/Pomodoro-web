@@ -96,6 +96,8 @@ export default function Home() {
         setMinutes(Math.floor(remainingTime / 60000));
         setSeconds(Math.floor((remainingTime % 60000) / 1000));
         setIsActive(true);
+      } else if (prevType !== "Pomodoro") { // Timer has ended
+        resetType("Pomodoro");
       }
     }
   }, []);
