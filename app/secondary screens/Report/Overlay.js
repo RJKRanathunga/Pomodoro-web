@@ -2,11 +2,10 @@ import React,{useState, useEffect, useRef} from 'react';
 import './overlayStyles.css';
 import { fetchLast7DaysData } from '../../data/store data';
 import { GrClose } from 'react-icons/gr';
-import { Line } from 'react-chartjs-2';
-import {Filler, Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, Filler, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
-
+ChartJS.register(Filler, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
   // Outside click handler
@@ -124,8 +123,10 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
     setSummery_FullWorkHours(Math.floor(totalWorkMinutes / 60));
     setSummery_remainingMinutes(totalWorkMinutes % 60);
 
+    const sortedKeys = Object.keys(dailyWorkMinutes).sort();
+
     const data = {
-      labels: Object.keys(dailyWorkMinutes).map(key => {
+      labels: sortedKeys.map(key => {
         const dateString = key.split('_')[1];
         const year = dateString.substring(0, 4);
         const month = dateString.substring(4, 6) - 1; // Months are 0-based in JavaScript Date
@@ -135,7 +136,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
       datasets: [
         {
           label: 'Total Work Time (Hours: Minutes)',
-          data: Object.values(dailyWorkMinutes),
+          data: sortedKeys.map(key => dailyWorkMinutes[key]),
           borderColor: 'rgba(75, 192, 192, 1)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           fill: true,
@@ -270,7 +271,7 @@ const Overlay = ({ isOverlayVisible, toggleOverlay }) => {
                     <h4>Total work in last week</h4>
                   </div>
                 </div>
-                <Line data={chartData} options={options} />
+                <Bar data={chartData} options={options} />
               </div>
             )}
             </div>
