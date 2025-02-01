@@ -14,6 +14,16 @@ function get_todayKey() {
   return dynamicKey;
 }
 
+function get_yesterdayKey() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const day = String(yesterday.getDate()).padStart(2, '0');
+  const month = String(yesterday.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const year = yesterday.getFullYear();
+  const dynamicKey = `dayReport_${year}${month}${day}`;
+  return dynamicKey;
+}
+
 function getLast7DaysKeys() {
   const keys = [];
   for (let i = 0; i < 7; i++) {
@@ -87,10 +97,30 @@ function addEndTime(setActiveTimeSegments) {
     if (prevSegments.length > 0 && prevSegments[prevSegments.length - 1].end === 0) {
       const minutesFromMidnight = getMinutes_fromMidnight();
       const updatedSegments = [...prevSegments];
-      updatedSegments[updatedSegments.length - 1].end = minutesFromMidnight;
-      const key = get_todayKey();
-      storeData(key, updatedSegments); // Store the updated segments in Redis
-      return updatedSegments;
+      const lastSegment = updatedSegments[updatedSegments.length - 1];
+      const startTime = lastSegment.start;
+
+      if (minutesFromMidnight < startTime){ // If the end time is before the start time, it means the user started the activity yesterday
+        const endOfDay = 24 * 60 - 1; // 23:59 in minutes
+
+        const todaySegment = [{
+          start: 0,
+          end: minutesFromMidnight
+        }];
+        updatedSegments[updatedSegments.length - 1].end = endOfDay;
+
+        const keyYesterday = get_yesterdayKey();
+        const keyToday = get_todayKey();
+
+        storeData(keyYesterday, updatedSegments);
+        storeData(keyToday, todaySegment);
+        return todaySegment;
+      } else {
+        updatedSegments[updatedSegments.length - 1].end = minutesFromMidnight;
+        const key = get_todayKey();
+        storeData(key, updatedSegments); // Store the updated segments in Redis
+        return updatedSegments;
+      }
     }
     return prevSegments || [];
   });
