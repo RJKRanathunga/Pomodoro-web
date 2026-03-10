@@ -27,6 +27,32 @@ This project is no longer actively maintained and is currently not deployed anyw
 
 ---
 
+## Screenshots
+
+### 25 Minute Work Timer
+<img width="1918" height="997" alt="timer-25" src="https://github.com/user-attachments/assets/3f70c419-7ddc-49a6-91cb-3dd33ef85645" />
+
+### 5 Minute Break Timer
+<img width="1918" height="998" alt="break-5" src="https://github.com/user-attachments/assets/b4c4003f-18e9-42fa-b309-4e1d9f950375" />
+
+### Settings Page
+<img width="1918" height="997" alt="settings" src="https://github.com/user-attachments/assets/115cc84e-07b1-400f-843d-06dbbc6669a2" />
+
+### Work History Visualization
+
+The application provides visual insights into completed work sessions.
+
+- A **timeline view** showing when work sessions occurred during the day.
+- A **weekly summary chart** displaying total work time for each day.
+
+
+Work sessions are represented as **green segments** along the timeline, allowing users to quickly see their productivity distribution throughout the day.
+
+<img width="1918" alt="timeline" src="https://github.com/user-attachments/assets/e7e83506-e1ef-42e5-9613-e25c90a93734" />
+<img width="1918" alt="bar chart" src="https://github.com/user-attachments/assets/45c402e0-d541-479f-8161-a0afc6789bee" />
+
+---
+
 ## Timer Accuracy
 
 Typical browser timers may run longer than expected due to:
@@ -61,25 +87,6 @@ Behavior:
 The application sends **browser notifications** when the timer reaches zero.
 
 This allows users to receive alerts even if the tab is not active.
-
----
-
-## Screenshots
-
-### 25 Minute Work Timer
-<img width="1918" height="997" alt="timer-25" src="https://github.com/user-attachments/assets/3f70c419-7ddc-49a6-91cb-3dd33ef85645" />
-
-### 5 Minute Break Timer
-<img width="1918" height="998" alt="break-5" src="https://github.com/user-attachments/assets/b4c4003f-18e9-42fa-b309-4e1d9f950375" />
-
-### Settings Page
-<img width="1918" height="997" alt="settings" src="https://github.com/user-attachments/assets/115cc84e-07b1-400f-843d-06dbbc6669a2" />
-
-### Work History Graph
-The application includes a **work history graph** that visualizes completed work sessions.  
-Work periods are displayed as **green segments** along a timeline.
-
-Since the project is no longer active and there is currently no database connected, a screenshot of this feature is not available. Screenshots may be added in the future if the project is temporarily redeployed for documentation purposes.
 
 ---
 
